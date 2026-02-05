@@ -1,0 +1,38 @@
+[
+  {
+    "id": "wazflo",
+    "name": "Wazflo",
+    "baseColor": "Blue",
+    "colorHex": "#2563eb",
+    "theme": "Tech, SaaS, Professional, Futuristic, Clean Lines",
+    "logoFileName": "logo-1769817859771-700626856.png",
+    "activeTemplate": null
+  },
+  {
+    "id": "dakroot",
+    "name": "Dakroot",
+    "baseColor": "Red",
+    "colorHex": "#DC2626",
+    "theme": "Bold, Industrial, Energetic, High Contrast",
+    "logoFileName": "dakroot.png",
+    "activeTemplate": null
+  },
+  {
+    "id": "s3t",
+    "name": "Sri Sai Senthil Travels",
+    "baseColor": "Black",
+    "colorHex": "#000000",
+    "theme": "Luxury, Premium, Sleek, Gold Accents, Travel",
+    "logoFileName": "s3t.png",
+    "activeTemplate": null
+  },
+  {
+    "id": "dakroot",
+    "name": "Dakroot",
+    "baseColor": "Red",
+    "colorHex": "#2563eb",
+    "theme": "Abstract digital network, dark grey background with glowing red geometric nodes, high-tech, minimalist, data visualization style, professional corporate aesthetics",
+    "logoFileName": "logo-1769816226445-567018126.png",
+    "activeTemplate": null
+  }
+]

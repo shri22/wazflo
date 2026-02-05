@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wazflo | The Future of WhatsApp Commerce</title>
+    <meta name="description"
+        content="Launch your digital shop on WhatsApp in minutes. Automated catalogs, payments, and order management for Indian businesses.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <img src="logo.png" alt="Wazflo Logo" class="logo-img">
+            </div>
+            <nav class="nav">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How it Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="https://app.wazflo.com/login" class="btn btn-secondary">Login</a>
+                <a href="#contact" class="btn btn-primary">Start Free Trial</a>
+            </nav>
+            <button class="mobile-nav-toggle">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <h1 class="hero-title animate-title">Transform WhatsApp into your <span class="text-gradient">Growth
+                            Engine.</span></h1>
+                    <p class="hero-description animate-fade">
+                        The world's most advanced multi-tenant commerce platform for WhatsApp. Catalog management,
+                        payments, and 24/7 automation—all in one place.
+                    </p>
+                    <div class="hero-actions animate-fade">
+                        <a href="#contact" class="btn btn-primary btn-lg">Create Shop Now</a>
+                        <a href="#" class="btn btn-secondary btn-lg">
+                            <i data-lucide="play-circle" class="icon-sm"></i> Watch Demo
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="phone-mockup animate-phone">
+                        <div class="phone-screen">
+                            <div class="whatsapp-header">
+                                <div class="back-btn"><i data-lucide="chevron-left"></i></div>
+                                <div class="store-info">
+                                    <div class="store-avatar">W</div>
+                                    <div class="store-name-status">
+                                        <div class="s-name">Wazflo Platform</div>
+                                        <div class="s-status">typically replies instantly</div>
+                                    </div>
+                                </div>
+                                <div class="header-icons">
+                                    <i data-lucide="video"></i>
+                                    <i data-lucide="phone"></i>
+                                </div>
+                            </div>
+                            <div class="chat-area">
+                                <div class="msg bot-msg">Hello! Looking for something specific today? 👋</div>
+                                <div class="msg bot-msg catalog-msg">
+                                    <div class="catalog-card">
+                                        <div class="catalog-img"
+                                            style="background-image: url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400');">
+                                        </div>
+                                        <div class="catalog-details">
+                                            <strong>Smart Watch Series 7</strong>
+                                            <span>₹24,999 • Limited Edition</span>
+                                        </div>
+                                        <button class="catalog-btn">Reserve Now</button>
+                                    </div>
+                                </div>
+                                <div class="msg user-msg">I want to order this.</div>
+                                <div class="msg bot-msg">Perfect! Secured payment link generated: <br> <span
+                                        class="link">rzp.io/l/wazflo_premium</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-glow"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Built for the <span class="text-gradient">Next Billion</span> Shoppers
+                    </h2>
+                    <p class="section-subtitle">Everything you need to run your business from a single dashboard.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-primary"><i data-lucide="shopping-bag"></i></div>
+                        <h3>Smart Catalog</h3>
+                        <p>Automatically showcase your products with images and variants directly in the chat.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue"><i data-lucide="credit-card"></i></div>
+                        <h3>Razorpay Integrated</h3>
+                        <p>Payments go directly to your bank account. Secure, fast, and highly trusted across India.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon icon-purple"><i data-lucide="users"></i></div>
+                        <h3>Multi-Tenant Ready</h3>
+                        <p>Run 100 stores from one platform. Perfect for agencies and entrepreneurs.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon icon-orange"><i data-lucide="bar-chart-3"></i></div>
+                        <h3>Real-time Analytics</h3>
+                        <p>Track sales, customer visits, and order status with a powerful dashboard.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon icon-red"><i data-lucide="package"></i></div>
+                        <h3>Inventory Sync</h3>
+                        <p>Stock levels update automatically as you sell. Never oversell a product again.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon icon-cyan"><i data-lucide="globe"></i></div>
+                        <h3>Regional Support</h3>
+                        <p>Sell in any Indian language. The bot adapts to your local customers' needs.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works" style="padding: 100px 0;">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">How it <span class="text-gradient">Works</span></h2>
+                    <p class="section-subtitle">Experience the simplest way to sell on WhatsApp.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-blue" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">
+                            <span style="font-size: 1.5rem; font-weight: 800;">1</span>
+                        </div>
+                        <h3>Create Your Shop</h3>
+                        <p>Fill in your business details and upload your products to our easy-to-use admin dashboard.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon icon-purple"
+                            style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;"><span
+                                style="font-size: 1.5rem; font-weight: 800;">2</span></div>
+                        <h3>Connect WhatsApp</h3>
+                        <p>Link your professional WhatsApp number to start receiving orders automatically.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon icon-cyan" style="background: rgba(6, 182, 212, 0.1); color: #06b6d4;">
+                            <span style="font-size: 1.5rem; font-weight: 800;">3</span>
+                        </div>
+                        <h3>Start Selling</h3>
+                        <p>Customers browse your catalog, add items to cart, and pay directly through WhatsApp chat.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Transparent <span class="text-gradient">Pricing</span></h2>
+                    <p class="section-subtitle">Scale your business without breaking the bank.</p>
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Starter</h3>
+                        <div class="price">₹499<span>/mo</span></div>
+                        <ul class="price-features">
+                            <li><i data-lucide="check"></i> 1 WhatsApp Number</li>
+                            <li><i data-lucide="check"></i> Up to 20 Products</li>
+                            <li><i data-lucide="check"></i> Basic Analytics</li>
+                            <li><i data-lucide="check"></i> Standard Support</li>
+                        </ul>
+                        <a href="#contact" class="btn btn-secondary">Get Started</a>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="popular-badge">Most Popular</div>
+                        <h3>Pro</h3>
+                        <div class="price">₹1,200<span>/mo</span></div>
+                        <ul class="price-features">
+                            <li><i data-lucide="check"></i> 1 WhatsApp Number</li>
+                            <li><i data-lucide="check"></i> Up to 100 Products</li>
+                            <li><i data-lucide="check"></i> Advanced Analytics</li>
+                            <li><i data-lucide="check"></i> Priority Support</li>
+                        </ul>
+                        <a href="#contact" class="btn btn-primary">Go Pro</a>
+                    </div>
+                    <div class="pricing-card">
+                        <h3>Enterprise</h3>
+                        <div class="price">Custom</div>
+                        <ul class="price-features">
+                            <li><i data-lucide="check"></i> Unlimited Everything</li>
+                            <li><i data-lucide="check"></i> Dedicated Account Manager</li>
+                            <li><i data-lucide="check"></i> API Access</li>
+                            <li><i data-lucide="check"></i> Custom Integrations</li>
+                        </ul>
+                        <a href="https://wa.me/919443856913" class="btn btn-secondary">Contact Sales</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <div class="contact-card">
+                    <div class="contact-info">
+                        <h2>Get in Touch</h2>
+                        <p>Have questions? We're here to help you grow.</p>
+                        <div class="contact-methods">
+                            <div class="method">
+                                <i data-lucide="mail"></i>
+                                <span>support@wazflo.com</span>
+                            </div>
+                            <div class="method">
+                                <i data-lucide="phone"></i>
+                                <span>+91 9443856913</span>
+                            </div>
+                        </div>
+                    </div>
+                    <form class="contact-form" id="signup-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Shop Name</label>
+                                <input type="text" placeholder="e.g. City Grocery" required id="store-name">
+                            </div>
+                            <div class="form-group">
+                                <label>Your Name</label>
+                                <input type="text" placeholder="John Doe" required id="admin-name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp Number</label>
+                            <input type="tel" placeholder="+91 XXXXX XXXXX" required id="admin-phone">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" placeholder="john@example.com" required id="admin-email">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Create My
+                            Shop</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-banner">
+            <div class="container">
+                <div class="cta-card">
+                    <div class="cta-content">
+                        <h2>Ready to scale your business?</h2>
+                        <p>Join hundreds of Indian merchants growing with Wazflo.</p>
+                    </div>
+                    <div class="cta-action">
+                        <a href="#contact" class="btn btn-primary btn-lg">Get Your Free Demo</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="logo.png" alt="Wazflo Logo" class="logo-img">
+                </div>
+                <p>Empowering local commerce across India through conversation.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Platform</h4>
+                <a href="#">Solutions</a>
+                <a href="#">Pricing</a>
+                <a href="#">Security</a>
+            </div>
+            <div class="footer-links">
+                <h4>Company</h4>
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+                <a href="#">Legal</a>
+            </div>
+            <div class="footer-newsletter">
+                <h4>Stay Updated</h4>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Enter your email">
+                    <button class="btn btn-primary">Join</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Wazflo Technologies. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // GSAP Animations
+        gsap.from(".animate-title", {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "back.out(1.7)"
+        });
+
+        // Mobile Nav Toggle
+        const mobileToggle = document.querySelector('.mobile-nav-toggle');
+        const nav = document.querySelector('.nav');
+
+        mobileToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+            const icon = mobileToggle.querySelector('i');
+            if (nav.classList.contains('active')) {
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        });
+
+        // Close nav on link click
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+                mobileToggle.querySelector('i').setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+
+        gsap.from(".animate-fade", {
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+            stagger: 0.2,
+            delay: 0.5
+        });
+
+        gsap.from(".animate-phone", {
+            scale: 0.8,
+            opacity: 0,
+            duration: 1.2,
+            delay: 0.3,
+            ease: "power4.out"
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Sign up form handler
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = 'Initializing Shop...';
+            btn.disabled = true;
+
+            const data = {
+                storeName: document.getElementById('store-name').value,
+                adminName: document.getElementById('admin-name').value,
+                adminPhone: document.getElementById('admin-phone').value,
+                adminEmail: document.getElementById('admin-email').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Smooth transition to success
+                    gsap.to(".contact-card", {
+                        scale: 0.95,
+                        opacity: 0,
+                        duration: 0.5,
+                        onComplete: () => {
+                            alert(`🎉 Success! Your Enterprise Shop is Ready.\n\nYour Login: ${result.data.username}\nYour Password: ${result.data.password}`);
+                            window.location.href = 'http://localhost:5173/login';
+                        }
+                    });
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Connection failed. Is the backend running?');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

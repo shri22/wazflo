@@ -1,0 +1,8 @@
+# OpenAI API Key (Required for DALL-E & GPT-4)
+OPENAI_API_KEY=sk-....
+
+# SerpApi Key (Optional - for "Search Mode" only)
+SERPAPI_KEY=....
+
+# Server Port
+PORT=4000

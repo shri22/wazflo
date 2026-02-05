@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandGen AI</title>
+    <style>
+        :root {
+            --primary: #2563EB;
+            --bg: #0F172A;
+            --card: #1E293B;
+            --text: #F8FAFC;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .controls {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 2rem;
+            background: linear-gradient(to right, #60A5FA, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #94A3B8;
+        }
+
+        select,
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            margin-top: 8px;
+            background: #334155;
+            border: 2px solid #475569;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+            box-sizing: border-box;
+            /* Fix padding causing overflow */
+        }
+
+        select:focus,
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 30px;
+            padding: 18px;
+            background: linear-gradient(135deg, #2563EB, #4F46E5);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .preview {
+            position: relative;
+            aspect-ratio: 1/1;
+            background: #334155;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #475569;
+        }
+
+        .preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .placeholder {
+            text-align: center;
+            color: #64748B;
+        }
+
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #ffffff3d;
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 800px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="controls">
+            <h1>BrandGen AI</h1>
+            <p style="color: #94A3B8;">Create stunning social media posts in seconds.</p>
+
+            <!-- New Brand Toggle -->
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button onclick="toggleNewBrand()"
+                    style="flex:2; margin:0; background:#475569; font-size:0.9rem; padding:10px;">+ Add New
+                    Brand</button>
+                <button onclick="editBrand()"
+                    style="flex:1; margin:0; background:#334155; font-size:0.9rem; padding:10px; border:1px solid #475569;">⚙️
+                    Edit Selected</button>
+            </div>
+
+            <div id="newBrandForm"
+                style="display:none; background:#334155; padding:20px; border-radius:15px; margin-bottom:20px;">
+                <h3 style="margin-top:0;" id="formTitle">New Brand Profile</h3>
+
+                <input type="hidden" id="editBrandId">
+
+                <label>Brand Name</label>
+                <input type="text" id="nbName" placeholder="e.g. My Cafe">
+
+                <label>Theme Instructions</label>
+                <input type="text" id="nbTheme" placeholder="e.g. Warm, Coffee, Rustic">
+
+                <label>Brand Color</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="color" id="nbColorHex" value="#2563EB"
+                        style="height:50px; width:50px; padding:0; border:none;">
+                    <input type="text" id="nbBaseColor" placeholder="Color Name (e.g. Brown)" style="margin-top:0;">
+                </div>
+
+                <label>Upload Logo (PNG/Transparent) <span id="logoOptional"
+                        style="display:none;font-size:0.7em">(Optional for Edit)</span></label>
+                <input type="file" id="nbLogo" accept="image/png, image/jpeg, image/jpg" style="margin-top:10px;">
+
+                <label>Upload Background Template (Optional)</label>
+                <p style="font-size:0.8rem; color:#94A3B8; margin-top:0;">Upload a clean background image. The AI will
+                    overlay your logo and text on this exact image.</p>
+                <input type="file" id="nbTemplate" accept="image/png, image/jpeg, image/jpg" style="margin-top:10px;">
+
+                <div id="removeTemplateSection" style="display:none; margin-top:5px;">
+                    <button type="button" onclick="markTemplateCleared()"
+                        style="background:#dc2626; font-size:0.8rem; padding:5px; width:auto; margin-top:0;">❌ Remove
+                        Current Template</button>
+                    <span id="removeMsg" style="color:#f87171; display:none; margin-left:10px;">Will be removed on
+                        save.</span>
+                </div>
+
+                <button onclick="submitBrand()" id="btnSaveBrand" style="background:#10B981; margin-top:15px;">Save
+                    Brand</button>
+            </div>
+
+            <label>Select Brand</label>
+            <select id="brandId">
+                <!-- Dynamically populated -->
+            </select>
+
+            <label>What's the update?</label>
+            <input type="text" id="prompt" placeholder="e.g., Diwali Offer - 50% Off" />
+
+            <button onclick="generate()" id="btn">✨ Generate Application</button>
+
+            <!-- Template Controls -->
+            <div id="templateControls"
+                style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid #475569;">
+                <label>Love this style?</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="templateName" placeholder="Enter style name (e.g. Blue Geometric)"
+                        style="margin-top:0;">
+                    <button onclick="saveTemplate()" style="margin-top:0; width:auto; background: #10B981;">Save Style
+                        🔒</button>
+                </div>
+            </div>
+
+            <div id="activeTemplateSection" style="margin-top:20px;">
+                <label>Active Style Mode:</label>
+                <select id="templateSelector" onchange="activateTemplate()">
+                    <option value="AUTO">✨ AI Creative Mode (Fresh every time)</option>
+                </select>
+            </div>
+
+            <!-- AI Insights -->
+            <div id="aiInsights"
+                style="display:none; margin-top:20px; background:#0F172A; padding:15px; border-radius:10px; font-size:0.9rem;">
+                <label>🧠 AI Brain:</label>
+                <p id="aiSource" style="color:#60A5FA; margin:5px 0;">Source: ...</p>
+                <p id="aiReasoning" style="color:#94A3B8; margin:5px 0; font-style:italic;">Reasoning: ...</p>
+            </div>
+        </div>
+
+        <!-- Output Section -->
+        <div class="preview">
+            <div class="placeholder" id="placeholder">
+                <h3>No Image Yet</h3>
+                <p>Enter a prompt to start dreaming.</p>
+            </div>
+            <div class="spinner" id="spinner"></div>
+            <img id="resultImage" />
+        </div>
+    </div>
+
+    <script>
+        let currentGenerationId = null;
+        let globalBrands = [];
+        let shouldClearTemplate = false;
+
+        function toggleNewBrand() {
+            // Reset form for "New" mode
+            shouldClearTemplate = false;
+            document.getElementById('editBrandId').value = '';
+            document.getElementById('formTitle').innerText = 'New Brand Profile';
+            document.getElementById('nbName').value = '';
+            document.getElementById('nbTheme').value = '';
+            document.getElementById('nbBaseColor').value = '';
+            document.getElementById('nbColorHex').value = '#2563EB';
+            document.getElementById('nbLogo').value = '';
+            document.getElementById('nbTemplate').value = '';
+            document.getElementById('logoOptional').style.display = 'none';
+            document.getElementById('btnSaveBrand').innerText = 'Create Brand';
+
+            document.getElementById('removeTemplateSection').style.display = 'none';
+            document.getElementById('removeMsg').style.display = 'none';
+
+            const form = document.getElementById('newBrandForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function markTemplateCleared() {
+            shouldClearTemplate = true;
+            document.getElementById('removeMsg').style.display = 'inline';
+        }
+
+        async function editBrand() {
+            const brandId = document.getElementById('brandId').value;
+            if (!brandId) return alert("No brand selected!");
+
+            const brand = globalBrands.find(b => b.id === brandId);
+            if (!brand) return alert("Brand data not found!");
+
+            // Reset
+            shouldClearTemplate = false;
+            document.getElementById('removeMsg').style.display = 'none';
+
+            // Pre-fill
+            document.getElementById('editBrandId').value = brand.id;
+            document.getElementById('formTitle').innerText = 'Edit Brand: ' + brand.name;
+            document.getElementById('nbName').value = brand.name;
+            document.getElementById('nbTheme').value = brand.theme;
+            document.getElementById('nbBaseColor').value = brand.baseColor;
+            document.getElementById('nbColorHex').value = brand.colorHex;
+
+            // Optional Logo text
+            document.getElementById('logoOptional').style.display = 'inline';
+
+            // Show Remove Template if applicable
+            if (brand.activeTemplate) {
+                document.getElementById('removeTemplateSection').style.display = 'block';
+            } else {
+                document.getElementById('removeTemplateSection').style.display = 'none';
+            }
+
+            document.getElementById('btnSaveBrand').innerText = 'Update Brand';
+
+            // Show Form
+            document.getElementById('newBrandForm').style.display = 'block';
+        }
+
+        async function submitBrand() {
+            const editId = document.getElementById('editBrandId').value;
+            const name = document.getElementById('nbName').value;
+            const theme = document.getElementById('nbTheme').value;
+            const baseColor = document.getElementById('nbBaseColor').value;
+            const colorHex = document.getElementById('nbColorHex').value;
+            const logo = document.getElementById('nbLogo').files[0];
+            const template = document.getElementById('nbTemplate').files[0];
+
+            if (!name) return alert("Name is required!");
+            if (!editId && !logo) return alert("Logo is required for new brands!");
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('theme', theme);
+            formData.append('baseColor', baseColor);
+            formData.append('colorHex', colorHex);
+            if (logo) formData.append('logo', logo);
+            if (template) formData.append('template', template);
+            if (shouldClearTemplate) formData.append('clearTemplate', 'true');
+
+            try {
+                let res;
+                if (editId) {
+                    // Update
+                    res = await fetch(`/api/brands/${editId}`, { method: 'PUT', body: formData });
+                } else {
+                    // Create
+                    res = await fetch('/api/brands', { method: 'POST', body: formData });
+                }
+
+                const data = await res.json();
+                if (data.success) {
+                    alert(editId ? "Brand Updated!" : "Brand Created!");
+                    document.getElementById('newBrandForm').style.display = 'none';
+                    loadBrands(); // Refresh list
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (e) { alert(e.message); }
+        }
+
+        async function loadBrands() {
+            try {
+                const res = await fetch('/api/brands');
+                globalBrands = await res.json(); // Store locally
+
+                const sel = document.getElementById('brandId');
+                const previousVal = sel.value; // Try to keep selection
+                sel.innerHTML = '';
+
+                globalBrands.forEach(b => {
+                    const opt = document.createElement('option');
+                    opt.value = b.id;
+                    opt.innerText = `${b.name}`;
+                    sel.appendChild(opt);
+                });
+
+                // Restore selection if possible
+                if (previousVal && globalBrands.find(b => b.id === previousVal)) {
+                    sel.value = previousVal;
+                }
+
+                // After loading brands, load templates for the first one if nothing selected
+                if (sel.value) loadTemplates();
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadTemplates() {
+            const brandId = document.getElementById('brandId').value;
+            if (!brandId) return;
+
+            try {
+                const res = await fetch(`/api/templates/${brandId}`);
+                const data = await res.json();
+                const sel = document.getElementById('templateSelector');
+                // Keep first option
+                sel.innerHTML = '<option value="AUTO">✨ AI Creative Mode (Fresh every time)</option>';
+
+                data.templates.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.path;
+                    opt.innerText = `🔒 ${t.name}`;
+                    sel.appendChild(opt);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // Load templates on brand change
+        document.getElementById('brandId').addEventListener('change', loadTemplates);
+        // Removed explicit loadTemplates() call here because loadBrands calls it.
+
+        async function saveTemplate() {
+            const name = document.getElementById('templateName').value;
+            const brandId = document.getElementById('brandId').value;
+            if (!name) return alert("Please name your style!");
+
+            try {
+                const res = await fetch('/api/templates/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ brandId, generationId: currentGenerationId, name })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Style Saved! It is now available in the dropdown.");
+                    loadTemplates();
+                    document.getElementById('templateControls').style.display = 'none';
+                }
+            } catch (e) { alert(e.message); }
+        }
+
+        async function activateTemplate() {
+            const templatePath = document.getElementById('templateSelector').value;
+            const brandId = document.getElementById('brandId').value;
+            await fetch('/api/templates/activate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ brandId, templatePath })
+            });
+        }
+
+        async function generate() {
+            const btn = document.getElementById('btn');
+            const spinner = document.getElementById('spinner');
+            const placeholder = document.getElementById('placeholder');
+            const img = document.getElementById('resultImage');
+            const brandId = document.getElementById('brandId').value;
+            const prompt = document.getElementById('prompt').value;
+            const templateControls = document.getElementById('templateControls');
+
+            if (!prompt) return alert("Please enter a prompt!");
+
+            // UI Loading State
+            btn.disabled = true;
+            btn.innerText = "Generating Magic...";
+            spinner.style.display = 'block';
+            placeholder.style.display = 'none';
+            img.style.display = 'none';
+            templateControls.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ brandId, userPrompt: prompt })
+                });
+
+                if (!response.ok) throw new Error("Generation Failed");
+
+                // Get Gen ID
+                currentGenerationId = response.headers.get('X-Generation-ID');
+
+                // Get AI Metadata
+                const aiSource = response.headers.get('X-AI-Source');
+                const aiReasoning = response.headers.get('X-AI-Reasoning');
+
+                if (aiSource) {
+                    document.getElementById('aiInsights').style.display = 'block';
+                    document.getElementById('aiSource').innerText = "Source: " + aiSource;
+                    document.getElementById('aiReasoning').innerText = `"${aiReasoning}"`;
+                } else {
+                    document.getElementById('aiInsights').style.display = 'none';
+                }
+
+                // Convert blob to image URL
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+
+                img.src = url;
+                img.style.display = 'block';
+                spinner.style.display = 'none';
+                btn.innerText = "✨ Generate Another";
+                btn.disabled = false;
+
+                // Show save control if not using a template (i.e. if it was generated fresh)
+                const currentMode = document.getElementById('templateSelector').value;
+                if (currentMode === 'AUTO') {
+                    templateControls.style.display = 'block';
+                }
+
+            } catch (e) {
+                alert("Error: " + e.message);
+                btn.disabled = false;
+                btn.innerText = "✨ Generate Application";
+                spinner.style.display = 'none';
+                placeholder.style.display = 'block';
+            }
+        }
+
+        // Initialize
+        loadBrands();
+    </script>
+</body>
+
+</html>

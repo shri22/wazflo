@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Commerce ROI Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .calculator {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            display: none;
+            margin-top: 40px;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .result-card.highlight {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table th {
+            background: #f5f7fa;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .comparison-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .savings {
+            background: #10b981;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .savings h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .savings .amount {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .chart {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f7fa;
+            border-radius: 15px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            margin: 0 10px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .calculate-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 WhatsApp Commerce ROI Calculator</h1>
+            <p>Calculate your return on investment and savings</p>
+        </div>
+
+        <div class="calculator">
+            <div class="section">
+                <h2 class="section-title">📊 Your Business Details</h2>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="ordersPerMonth">Average Orders per Month</label>
+                        <input type="number" id="ordersPerMonth" value="200" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="avgOrderValue">Average Order Value (₹)</label>
+                        <input type="number" id="avgOrderValue" value="1000" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">💳 Platform Costs</h2>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="customPlatformCost">Custom Platform Cost (₹)</label>
+                        <input type="number" id="customPlatformCost" value="350000" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="saasMonthlyCost">SaaS Monthly Cost (₹)</label>
+                        <input type="number" id="saasMonthlyCost" value="15000" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="supportCost">Optional Monthly Support (₹)</label>
+                        <input type="number" id="supportCost" value="20000" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">📈 Expected Improvements</h2>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="orderIncrease">Order Volume Increase (%)</label>
+                        <input type="number" id="orderIncrease" value="30" min="0" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="timeReduction">Time Saved per Order (minutes)</label>
+                        <input type="number" id="timeReduction" value="10" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="hourlyRate">Staff Hourly Rate (₹)</label>
+                        <input type="number" id="hourlyRate" value="200" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">⏰ Timeline</h2>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="years">Calculate for (years)</label>
+                        <select id="years">
+                            <option value="1">1 Year</option>
+                            <option value="2">2 Years</option>
+                            <option value="3" selected>3 Years</option>
+                            <option value="5">5 Years</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculate()">🔢 Calculate ROI</button>
+
+            <div class="results" id="results">
+                <h2 class="section-title">📊 Results</h2>
+
+                <div class="result-grid">
+                    <div class="result-card">
+                        <div class="result-label">Monthly Revenue (Current)</div>
+                        <div class="result-value" id="currentRevenue">₹0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Monthly Revenue (With Platform)</div>
+                        <div class="result-value" id="newRevenue">₹0</div>
+                    </div>
+                    <div class="result-card highlight">
+                        <div class="result-label">Additional Revenue/Month</div>
+                        <div class="result-value" id="additionalRevenue">₹0</div>
+                    </div>
+                </div>
+
+                <div class="result-grid">
+                    <div class="result-card">
+                        <div class="result-label">Time Saved per Month</div>
+                        <div class="result-value" id="timeSaved">0 hrs</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Cost Savings (Time)</div>
+                        <div class="result-value" id="costSavings">₹0</div>
+                    </div>
+                    <div class="result-card highlight">
+                        <div class="result-label">Break-even Period</div>
+                        <div class="result-value" id="breakeven">0 months</div>
+                    </div>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Custom Platform Cost</th>
+                            <th>SaaS Platform Cost</th>
+                            <th>Your Savings</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonTable">
+                    </tbody>
+                </table>
+
+                <div class="savings">
+                    <h3>💰 Total Savings Over <span id="totalYears">3</span> Years</h3>
+                    <div class="amount" id="totalSavings">₹0</div>
+                    <p style="margin-top: 10px; opacity: 0.9;">Compared to SaaS platforms</p>
+                </div>
+
+                <div class="chart">
+                    <h3 style="text-align: center; margin-bottom: 20px;">Cost Comparison by Year</h3>
+                    <div class="bar-chart" id="barChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatCurrency(amount) {
+            return '₹' + amount.toLocaleString('en-IN');
+        }
+
+        function calculate() {
+            // Get inputs
+            const ordersPerMonth = parseFloat(document.getElementById('ordersPerMonth').value) || 0;
+            const avgOrderValue = parseFloat(document.getElementById('avgOrderValue').value) || 0;
+            const customPlatformCost = parseFloat(document.getElementById('customPlatformCost').value) || 0;
+            const saasMonthlyCost = parseFloat(document.getElementById('saasMonthlyCost').value) || 0;
+            const supportCost = parseFloat(document.getElementById('supportCost').value) || 0;
+            const orderIncrease = parseFloat(document.getElementById('orderIncrease').value) || 0;
+            const timeReduction = parseFloat(document.getElementById('timeReduction').value) || 0;
+            const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+            const years = parseInt(document.getElementById('years').value) || 3;
+
+            // Calculate current revenue
+            const currentRevenue = ordersPerMonth * avgOrderValue;
+
+            // Calculate new revenue with increase
+            const newOrders = ordersPerMonth * (1 + orderIncrease / 100);
+            const newRevenue = newOrders * avgOrderValue;
+            const additionalRevenue = newRevenue - currentRevenue;
+
+            // Calculate time savings
+            const timeSavedMinutes = ordersPerMonth * timeReduction;
+            const timeSavedHours = timeSavedMinutes / 60;
+            const costSavingsMonth = timeSavedHours * hourlyRate;
+
+            // Calculate total monthly benefit
+            const totalMonthlyBenefit = additionalRevenue + costSavingsMonth;
+
+            // Calculate break-even
+            const breakeven = Math.ceil(customPlatformCost / totalMonthlyBenefit);
+
+            // Update results
+            document.getElementById('currentRevenue').textContent = formatCurrency(Math.round(currentRevenue));
+            document.getElementById('newRevenue').textContent = formatCurrency(Math.round(newRevenue));
+            document.getElementById('additionalRevenue').textContent = formatCurrency(Math.round(additionalRevenue));
+            document.getElementById('timeSaved').textContent = Math.round(timeSavedHours) + ' hrs';
+            document.getElementById('costSavings').textContent = formatCurrency(Math.round(costSavingsMonth));
+            document.getElementById('breakeven').textContent = breakeven + ' months';
+
+            // Build comparison table
+            let comparisonHTML = '';
+            let totalCustomCost = customPlatformCost;
+            let totalSaaSCost = 0;
+            let maxCost = 0;
+
+            const yearlyData = [];
+
+            for (let year = 1; year <= years; year++) {
+                const customYearlyCost = year === 1 ? customPlatformCost : (supportCost * 12);
+                const saasYearlyCost = saasMonthlyCost * 12;
+
+                totalCustomCost = year === 1 ? customPlatformCost : totalCustomCost + (supportCost * 12);
+                totalSaaSCost += saasYearlyCost;
+
+                const savings = totalSaaSCost - totalCustomCost;
+
+                maxCost = Math.max(maxCost, totalCustomCost, totalSaaSCost);
+
+                yearlyData.push({
+                    year,
+                    custom: totalCustomCost,
+                    saas: totalSaaSCost
+                });
+
+                comparisonHTML += `
+                    <tr>
+                        <td>Year ${year}</td>
+                        <td>${formatCurrency(Math.round(totalCustomCost))}</td>
+                        <td>${formatCurrency(Math.round(totalSaaSCost))}</td>
+                        <td style="color: ${savings > 0 ? '#10b981' : '#ef4444'}; font-weight: 600;">
+                            ${formatCurrency(Math.round(Math.abs(savings)))}
+                            ${savings > 0 ? '✅' : '❌'}
+                        </td>
+                    </tr>
+                `;
+            }
+
+            document.getElementById('comparisonTable').innerHTML = comparisonHTML;
+            document.getElementById('totalYears').textContent = years;
+            document.getElementById('totalSavings').textContent = formatCurrency(Math.round(totalSaaSCost - totalCustomCost));
+
+            // Build bar chart
+            let chartHTML = '';
+            yearlyData.forEach(data => {
+                const customHeight = (data.custom / maxCost) * 100;
+                const saasHeight = (data.saas / maxCost) * 100;
+
+                chartHTML += `
+                    <div style="flex: 1; display: flex; gap: 5px; align-items: flex-end;">
+                        <div class="bar" style="height: ${customHeight}%; background: linear-gradient(to top, #667eea, #764ba2);">
+                            <div class="bar-value">${formatCurrency(Math.round(data.custom / 1000))}K</div>
+                            <div class="bar-label">Custom<br>Year ${data.year}</div>
+                        </div>
+                        <div class="bar" style="height: ${saasHeight}%; background: linear-gradient(to top, #f59e0b, #ef4444);">
+                            <div class="bar-value">${formatCurrency(Math.round(data.saas / 1000))}K</div>
+                            <div class="bar-label">SaaS<br>Year ${data.year}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('barChart').innerHTML = chartHTML;
+
+            // Show results
+            document.getElementById('results').classList.add('show');
+
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Calculate on page load
+        window.onload = calculate;
+    </script>
+</body>
+
+</html>
