@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingCart, MessageSquare, LogOut, Settings, Megaphone, CreditCard, X } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, MessageSquare, LogOut, Settings, CreditCard, LayoutTemplate, X, Send } from 'lucide-react';
 
 export default function Sidebar({ isOpen, onClose }) {
     const location = useLocation();
@@ -13,7 +13,8 @@ export default function Sidebar({ isOpen, onClose }) {
         { path: '/products', icon: Package, label: 'Products' },
         { path: '/orders', icon: ShoppingCart, label: 'Orders' },
         { path: '/messages', icon: MessageSquare, label: 'Messages' },
-        { path: '/broadcasts', icon: Megaphone, label: 'Broadcasts' },
+        { path: '/campaigns', icon: Send, label: 'Campaigns' },
+        { path: '/templates', icon: LayoutTemplate, label: 'Templates' },
         { path: '/billing', icon: CreditCard, label: 'Billing' },
         { path: '/settings', icon: Settings, label: 'Settings' },
     ];

@@ -410,11 +410,79 @@ export const Broadcast = {
     getAll: async (storeId) => {
         return await all('SELECT * FROM broadcasts WHERE store_id = ? ORDER BY created_at DESC', [storeId]);
     },
+    getById: async (id, storeId) => {
+        return await get('SELECT * FROM broadcasts WHERE id = ? AND store_id = ?', [id, storeId]);
+    },
     create: async (broadcast) => {
         const result = await run(`
-            INSERT INTO broadcasts (store_id, name, template_name, target_count, status)
-            VALUES (?, ?, ?, ?, ?)
-        `, [broadcast.store_id, broadcast.name, broadcast.template_name, broadcast.target_count, broadcast.status || 'pending']);
+            INSERT INTO broadcasts (store_id, name, template_name, target_count, status, scheduled_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `, [
+            broadcast.store_id,
+            broadcast.name,
+            broadcast.template_name,
+            broadcast.target_count,
+            broadcast.status || 'pending',
+            broadcast.scheduled_at || null
+        ]);
         return result.lastID;
+    },
+    updateStatus: async (id, status) => {
+        return await run('UPDATE broadcasts SET status = ? WHERE id = ?', [status, id]);
+    },
+    incrementStats: async (id, type) => {
+        // type: 'success' or 'failed'
+        const column = type === 'success' ? 'success_count' : 'failed_count';
+        return await run(`UPDATE broadcasts SET ${column} = ${column} + 1 WHERE id = ?`, [id]);
+    }
+};
+
+export const Template = {
+    getAll: async (storeId) => {
+        return await all('SELECT * FROM templates WHERE store_id = ? ORDER BY created_at DESC', [storeId]);
+    },
+    create: async (template) => {
+        const result = await run(`
+            INSERT INTO templates (store_id, name, category, language, components, status, meta_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `, [
+            template.store_id,
+            template.name,
+            template.category,
+            template.language,
+            JSON.stringify(template.components),
+            template.status || 'APPROVED', // Default to approved for demo
+            template.meta_id
+        ]);
+        return result.lastID;
+    },
+    delete: async (id, storeId) => {
+        return await run('DELETE FROM templates WHERE id = ? AND store_id = ?', [id, storeId]);
+    }
+};
+
+export const CustomerTag = {
+    getAll: async (storeId) => {
+        return await all('SELECT * FROM customer_tags WHERE store_id = ?', [storeId]);
+    },
+    create: async (storeId, name, color) => {
+        const result = await run(`
+            INSERT INTO customer_tags (store_id, name, color) VALUES (?, ?, ?)
+        `, [storeId, name, color]);
+        return result.lastID;
+    },
+    assign: async (customerId, tagId) => {
+        try {
+            await run('INSERT INTO customer_tag_mappings (customer_id, tag_id) VALUES (?, ?)', [customerId, tagId]);
+        } catch (e) {
+            // Ignore unique constraint violations
+        }
+    },
+    getForCustomer: async (customerId) => {
+        return await all(`
+            SELECT t.* FROM customer_tags t
+            JOIN customer_tag_mappings m ON t.id = m.tag_id
+            WHERE m.customer_id = ?
+        `, [customerId]);
     }
 };

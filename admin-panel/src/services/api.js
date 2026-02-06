@@ -75,8 +75,16 @@ export const deleteStore = (id) => api.delete(`/stores/${id}`);
 export const getStoreSettings = () => api.get('/stores/settings');
 export const updateStoreSettings = (data) => api.put('/stores/settings', data);
 
-// Platform
+// Templates
+export const getTemplates = () => api.get('/templates');
+export const createTemplate = (data) => api.post('/templates', data);
+export const deleteTemplate = (id) => api.delete(`/templates/${id}`);
+
+// Platform / Broadcasts
 export const getMessages = () => api.get('/platform/messages');
+export const getConversations = () => api.get('/platform/conversations');
+export const getChatHistory = (phone) => api.get(`/platform/messages/${phone}`);
+export const sendMessage = (phone, message) => api.post('/platform/messages/send', { phone, message });
 export const getUsageLogs = () => api.get('/platform/usage');
 export const getBroadcasts = () => api.get('/platform/broadcasts');
 export const createBroadcast = (data) => api.post('/platform/broadcasts', data);

@@ -12,6 +12,7 @@ import paymentRoutes from './routes/payment.js';
 import authRoutes from './routes/auth.js';
 import storeRoutes from './routes/stores.js';
 import platformRoutes from './routes/platform.js';
+import templateRoutes from './routes/templates.js';
 import auth from './middleware/auth.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -59,6 +60,7 @@ app.use('/api/products', auth, productRoutes);
 app.use('/api/orders', auth, orderRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/platform', platformRoutes);
+app.use('/api/templates', auth, templateRoutes);
 
 // Health check
 app.get('/', (req, res) => {

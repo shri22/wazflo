@@ -7,7 +7,8 @@ import Orders from './pages/Orders';
 import Stores from './pages/Stores';
 import Settings from './pages/Settings';
 import Messages from './pages/Messages';
-import Broadcasts from './pages/Broadcasts';
+import Campaigns from './pages/Campaigns';
+import Templates from './pages/Templates';
 import Billing from './pages/Billing';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -88,9 +89,15 @@ function App() {
                     </ProtectedRoute>
                 } />
 
-                <Route path="/broadcasts" element={
+                <Route path="/campaigns" element={
                     <ProtectedRoute>
-                        <Layout><Broadcasts /></Layout>
+                        <Layout><Campaigns /></Layout>
+                    </ProtectedRoute>
+                } />
+
+                <Route path="/templates" element={
+                    <ProtectedRoute>
+                        <Layout><Templates /></Layout>
                     </ProtectedRoute>
                 } />
 
