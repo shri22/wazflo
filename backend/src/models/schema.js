@@ -11,6 +11,7 @@ export const createTables = async () => {
         whatsapp_verify_token TEXT,
         razorpay_key_id TEXT,
         razorpay_key_secret TEXT,
+        support_phone TEXT, -- Personal Owner Number for Handover
         wallet_balance REAL DEFAULT 0.0,
         message_cost REAL DEFAULT 1.00,
         is_active INTEGER DEFAULT 1,
@@ -184,7 +185,7 @@ export const createTables = async () => {
         FOREIGN KEY (broadcast_id) REFERENCES broadcasts(id) ON DELETE CASCADE
       );
     `);
-    
+
     // Migration: Add status column to messages if not exists
     await exec(`
         PRAGMA foreign_keys=off;
@@ -195,6 +196,16 @@ export const createTables = async () => {
         COMMIT;
         PRAGMA foreign_keys=on;
     `);
+
+    // Migration: Add support_phone to stores if missing
+    try {
+      await exec(`ALTER TABLE stores ADD COLUMN support_phone TEXT;`);
+    } catch (e) {
+      // Find if error is "duplicate column name" -> ignore
+      if (!e.message.includes('duplicate column name')) {
+        console.log('Info: support_phone column might already exist or error:', e.message);
+      }
+    }
 
     console.log('✅ Database tables created successfully');
   } catch (error) {

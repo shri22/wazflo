@@ -77,6 +77,16 @@ export default function Settings() {
                         />
                     </div>
                     <div className="form-group">
+                        <label>Owner Personal Number (For Handoff)</label>
+                        <input
+                            type="text"
+                            value={settings.support_phone || ''}
+                            onChange={(e) => setSettings({ ...settings, support_phone: e.target.value })}
+                            placeholder="e.g. 919876543210 (with country code)"
+                        />
+                        <p className="field-hint">Customers will be redirected here when they ask for 'Expert/Support'.</p>
+                    </div>
+                    <div className="form-group">
                         <label>System User Access Token</label>
                         <textarea
                             value={settings.whatsapp_access_token}

@@ -160,8 +160,13 @@ const handleButtonReply = async (from, buttonId, state, context, customer, store
             await sendMessageWithBilling(store, from, 'Order Tracking', 'text', () => sendOrderTracking(from, customer.phone, store, storeConfig));
             break;
 
-        case 'contact_support':
-            await sendMessageWithBilling(store, from, 'Support Contact', 'text', () => whatsapp.sendTextMessage(from, `💬 Support for ${store.name}:\n\nPlease visit our store or reply here. Our team will assist you shortly!`, storeConfig));
+        case 'talk_to_expert':
+        case 'contact_support': // Handle legacy ID if needed
+            if (store.support_phone) {
+                await sendMessageWithBilling(store, from, 'Support Connection', 'text', () => whatsapp.sendTextMessage(from, `👨🏻 *Chat with Owner*\n\nPlease click the link below to chat directly with our expert/owner:\n\n👇👇👇\nhttps://wa.me/${store.support_phone}?text=Hi%20I%20have%20a%20query`, storeConfig));
+            } else {
+                await sendMessageWithBilling(store, from, 'Support Contact', 'text', () => whatsapp.sendTextMessage(from, `💬 Support for ${store.name}:\n\nPlease reply here with your query. Our team will check the dashboard and reply via this bot.`, storeConfig));
+            }
             break;
 
         case 'confirm_order':

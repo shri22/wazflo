@@ -25,10 +25,21 @@ export const Store = {
                 whatsapp_access_token = ?, 
                 razorpay_key_id = ?, 
                 razorpay_key_secret = ?,
+                support_phone = ?,
                 wallet_balance = ?,
                 message_cost = ?
             WHERE id = ?
-        `, [store.name, store.whatsapp_phone_number_id, store.whatsapp_access_token, store.razorpay_key_id, store.razorpay_key_secret, store.wallet_balance, store.message_cost, id]);
+        `, [
+            store.name,
+            store.whatsapp_phone_number_id,
+            store.whatsapp_access_token,
+            store.razorpay_key_id,
+            store.razorpay_key_secret,
+            store.support_phone,
+            store.wallet_balance,
+            store.message_cost,
+            id
+        ]);
     },
     updateWallet: async (id, amount) => {
         return await run('UPDATE stores SET wallet_balance = wallet_balance + ? WHERE id = ?', [amount, id]);

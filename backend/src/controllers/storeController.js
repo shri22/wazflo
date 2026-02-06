@@ -71,7 +71,7 @@ export const getStoreSettings = async (req, res) => {
 export const updateStoreSettings = async (req, res) => {
     try {
         const storeId = req.admin.storeId;
-        const { whatsapp_access_token, whatsapp_phone_number_id, razorpay_key_id, razorpay_key_secret } = req.body;
+        const { whatsapp_access_token, whatsapp_phone_number_id, razorpay_key_id, razorpay_key_secret, support_phone } = req.body;
 
         const current = await Store.getById(storeId);
         await Store.update(storeId, {
@@ -79,7 +79,10 @@ export const updateStoreSettings = async (req, res) => {
             whatsapp_access_token,
             whatsapp_phone_number_id,
             razorpay_key_id,
-            razorpay_key_secret
+            razorpay_key_secret,
+            support_phone,
+            wallet_balance: current.wallet_balance,
+            message_cost: current.message_cost
         });
 
         const store = await Store.getById(storeId);
