@@ -30,7 +30,7 @@ export const getOrderById = async (req, res) => {
     }
 };
 
-// Update order status
+// Update order status with Notification
 export const updateOrderStatus = async (req, res) => {
     try {
         const storeId = req.admin.storeId;
@@ -52,9 +52,43 @@ export const updateOrderStatus = async (req, res) => {
         }
 
         await Order.updateStatus(parseInt(id), status, storeId);
-        const order = await Order.getById(parseInt(id), storeId);
+        const updatedOrder = await Order.getById(parseInt(id), storeId);
 
-        res.json({ success: true, data: order });
+        // --- AUTOMATED NOTIFICATION LOGIC ---
+        // Dynamically import services
+        const { Store } = await import('../models/index.js');
+        const { sendMessageWithBilling } = await import('../services/billingService.js');
+        const { sendTextMessage } = await import('../services/whatsappService.js');
+
+        const store = await Store.getById(storeId);
+
+        let message = '';
+        if (status === 'confirmed') message = `✅ Your Order #${updatedOrder.order_number} has been CONFIRMED! We will pack it shortly.`;
+        if (status === 'shipped') message = `🚚 Good news! Your Order #${updatedOrder.order_number} has been SHIPPED. It is on the way!`;
+        if (status === 'delivered') message = `🎉 Order #${updatedOrder.order_number} is DELIVERED. Thank you for shopping with us!`;
+        if (status === 'cancelled') message = `❌ Your Order #${updatedOrder.order_number} has been CANCELLED.`;
+
+        if (message && store) {
+            console.log(`Sending ${status} notification to ${updatedOrder.customer_phone} for Store ${store.name}`);
+
+            // Config for whatsapp service
+            const storeConfig = {
+                phoneNumberId: store.whatsapp_phone_number_id,
+                accessToken: store.whatsapp_access_token
+            };
+
+            // Fire and forget (don't await strictly for response time, but handle error)
+            sendMessageWithBilling(
+                store,
+                updatedOrder.customer_phone,
+                message,
+                'utility_alert',
+                () => sendTextMessage(updatedOrder.customer_phone, message, storeConfig)
+            ).catch(err => console.error('Failed to send status notification:', err.message));
+        }
+        // ------------------------------------
+
+        res.json({ success: true, data: updatedOrder });
     } catch (error) {
         console.error('Error updating order status:', error);
         res.status(500).json({ success: false, error: 'Failed to update order status' });

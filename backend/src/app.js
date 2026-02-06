@@ -20,10 +20,18 @@ import { fileURLToPath } from 'url';
 // Import database setup
 import { createTables } from './models/schema.js';
 
+// Import Cron Service
+import { runRecoveryCheck } from './services/cronService.js';
+import schedule from 'node-schedule';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config();
+
+// Initialize Cron Jobs
+schedule.scheduleJob('0 * * * *', runRecoveryCheck); // Run every hour
+console.log('⏰ Cron Jobs Initialized: Abandoned Cart Recovery active.');
 
 const app = express();
 const PORT = process.env.PORT || 3000;

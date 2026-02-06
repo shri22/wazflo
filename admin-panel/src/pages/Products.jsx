@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { getProducts, createProduct, updateProduct, deleteProduct, importProducts } from '../services/api';
-import { Plus, Edit2, Trash2, X, Upload, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Upload, Image as ImageIcon, Share2 } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const BACKEND_URL = API_BASE_URL.replace('/api', '');
@@ -138,6 +138,25 @@ export default function Products() {
         }
     };
 
+    const handleResellerCopy = (product) => {
+        // Create Reseller Friendly Caption (No Price, No Contacts)
+        const caption = `
+🌟 *New Collection: ${product.name}*
+
+${product.description || 'Premium quality fabric, latest design.'}
+
+✅ *Quality check done*
+✅ *Ready to dispatch*
+
+*Sizes:* S, M, L, XL
+*Fabric:* ${product.category || 'Premium Cotton'}
+
+👇 *Reply for best wholesale rates!*
+`;
+        navigator.clipboard.writeText(caption);
+        alert('Reseller Caption Copied! (Paste this in WhatsApp)');
+    };
+
     const resetForm = () => {
         setFormData({
             name: '',
@@ -261,6 +280,13 @@ export default function Products() {
                                         </td>
                                         <td>
                                             <div className="flex gap-sm">
+                                                <button
+                                                    className="btn btn-sm btn-secondary text-purple-600"
+                                                    onClick={() => handleResellerCopy(product)}
+                                                    title="Copy Reseller Caption (No Price)"
+                                                >
+                                                    <Share2 size={16} />
+                                                </button>
                                                 <button
                                                     className="btn btn-sm btn-secondary"
                                                     onClick={() => handleEdit(product)}

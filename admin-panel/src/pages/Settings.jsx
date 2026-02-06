@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getStoreSettings, updateStoreSettings } from '../services/api';
-import { Save, Shield, MessageSquare, CreditCard, Copy, Check } from 'lucide-react';
+import { Save, Shield, MessageSquare, CreditCard, Copy, Check, Globe } from 'lucide-react';
 
 export default function Settings() {
     const [settings, setSettings] = useState({
@@ -113,6 +113,7 @@ export default function Settings() {
                         <CreditCard className="text-blue" />
                         <h2>Razorpay Integration</h2>
                     </div>
+                    {/* ... (existing Razorpay fields) ... */}
                     <div className="form-group">
                         <label>Razorpay Key ID</label>
                         <input
@@ -131,9 +132,50 @@ export default function Settings() {
                             placeholder="••••••••••••"
                         />
                     </div>
-                    <div className="alert alert-info">
-                        <Shield size={18} />
-                        <p>These keys are used for generating payment links for your customers.</p>
+                </div>
+
+                {/* AUTOMATION RULES SECTION */}
+                <div className="card">
+                    <div className="card-header">
+                        <Globe className="text-purple-500" />
+                        <h2>Automation Rules</h2>
+                    </div>
+
+                    {/* Welcome Message Rule - Mock UI */}
+                    <div className="rule-item">
+                        <div className="flex justify-between items-center mb-xs">
+                            <label className="font-bold text-sm">Welcome Message</label>
+                            <input type="checkbox" className="toggle" checked readOnly />
+                        </div>
+                        <p className="text-xs text-muted mb-sm">Sent when a new customer says "Hi".</p>
+                        <textarea className="form-input text-xs" rows={2} readOnly value="Welcome to our store! Check out our latest collection below 👇" />
+                    </div>
+
+                    <div className="border-t border-gray-700 my-md"></div>
+
+                    {/* Abandoned Cart Rule - Mock UI */}
+                    <div className="rule-item">
+                        <div className="flex justify-between items-center mb-xs">
+                            <label className="font-bold text-sm">Abandoned Cart Recovery</label>
+                            <input type="checkbox" className="toggle" checked readOnly />
+                        </div>
+                        <p className="text-xs text-muted mb-sm">Sent 1 hour after inactivity in cart.</p>
+                        <textarea className="form-input text-xs" rows={2} readOnly value="👋 Hi! You left items in your cart. Stocks are running low! Type 'CHECKOUT' to complete." />
+                    </div>
+
+                    <div className="border-t border-gray-700 my-md"></div>
+
+                    {/* Order Notification Rule - Mock UI */}
+                    <div className="rule-item">
+                        <div className="flex justify-between items-center mb-xs">
+                            <label className="font-bold text-sm">Order Status Updates</label>
+                            <input type="checkbox" className="toggle" checked readOnly />
+                        </div>
+                        <p className="text-xs text-muted">Automatically send WhatsApp alerts for Shipped/Delivered status.</p>
+                    </div>
+
+                    <div className="bg-tertiary p-sm rounded mt-md">
+                        <p className="text-xs text-muted italic">Advanced keyword rules coming soon.</p>
                     </div>
                 </div>
 
@@ -151,6 +193,10 @@ export default function Settings() {
                     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
                     gap: var(--spacing-xl);
                 }
+                .text-purple-500 { color: #a855f7; }
+                .rule-item { margin-bottom: 12px; }
+                .toggle { accent-color: var(--primary); transform: scale(1.2); cursor: pointer; }
+                /* ... rest of styles ... */
                 .webhook-box {
                     background: var(--bg-main);
                     padding: var(--spacing-md);
