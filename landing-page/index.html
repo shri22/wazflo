@@ -215,32 +215,41 @@
                     </div>
                 </div>
 
-                <div class="faq-section" style="margin-top: 80px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                <div class="faq-section"
+                    style="margin-top: 80px; max-width: 800px; margin-left: auto; margin-right: auto;">
                     <div style="text-align: center; margin-bottom: 40px;">
-                        <h3 class="section-title" style="font-size: 2rem;">Frequently Asked <span class="text-gradient">Questions</span></h3>
+                        <h3 class="section-title" style="font-size: 2rem;">Frequently Asked <span
+                                class="text-gradient">Questions</span></h3>
                     </div>
-                    
-                    <div class="faq-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
-                        <h4 style="color: white; font-size: 1.2rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+
+                    <div class="faq-item"
+                        style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+                        <h4
+                            style="color: white; font-size: 1.2rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <i data-lucide="shield-check" style="color: #60a5fa;"></i>
                             Do I need a registered business to use Wazflo?
                         </h4>
                         <p style="color: #94a3b8; line-height: 1.6;">
-                            To access Official WhatsApp API features (like the Green Tick and Automated Bots), Meta requires business verification. 
+                            To access Official WhatsApp API features (like the Green Tick and Automated Bots), Meta
+                            requires business verification.
                             <br><br>
-                            If your business is currently unregistered or you don't have documents handy, don't worry. 
-                            Our onboarding team provides <strong>Complete Business Verification Assistance</strong> to get you officially approved and live in days. 
+                            If your business is currently unregistered or you don't have documents handy, don't worry.
+                            Our onboarding team provides <strong>Complete Business Verification Assistance</strong> to
+                            get you officially approved and live in days.
                             Talk to our experts to learn about our "Business Starter Kit".
                         </p>
                     </div>
 
-                    <div class="faq-item" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 24px;">
-                        <h4 style="color: white; font-size: 1.2rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                    <div class="faq-item"
+                        style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 24px;">
+                        <h4
+                            style="color: white; font-size: 1.2rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <i data-lucide="zap" style="color: #60a5fa;"></i>
                             How fast can I start selling?
                         </h4>
                         <p style="color: #94a3b8; line-height: 1.6;">
-                            If you have your product list ready (Excel/CSV), you can go live in <strong>10 minutes</strong>. 
+                            If you have your product list ready (Excel/CSV), you can go live in <strong>10
+                                minutes</strong>.
                             Our "Bulk Import" feature allows you to upload 500+ products instantly.
                         </p>
                     </div>
@@ -416,7 +425,7 @@
             };
 
             try {
-                const response = await fetch('http://localhost:3000/api/auth/register', {
+                const response = await fetch('https://api.wazflo.com/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -432,7 +441,7 @@
                         duration: 0.5,
                         onComplete: () => {
                             alert(`🎉 Success! Your Enterprise Shop is Ready.\n\nYour Login: ${result.data.username}\nYour Password: ${result.data.password}`);
-                            window.location.href = 'http://localhost:5173/login';
+                            window.location.href = 'https://app.wazflo.com/login';
                         }
                     });
                 } else {

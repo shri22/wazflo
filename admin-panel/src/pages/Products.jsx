@@ -3,7 +3,7 @@ import Papa from 'papaparse';
 import { getProducts, createProduct, updateProduct, deleteProduct, importProducts } from '../services/api';
 import { Plus, Edit2, Trash2, X, Upload, Image as ImageIcon, Share2 } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.wazflo.com/api';
 const BACKEND_URL = API_BASE_URL.replace('/api', '');
 
 export default function Products() {

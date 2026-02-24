@@ -1,0 +1,24 @@
+# Node
+node_modules/
+dist/
+.env
+.DS_Store
+
+# .NET
+bin/
+obj/
+appsettings.Development.json
+
+# Binaries/Archives
+*.tar.gz
+*.zip
+*.rar
+
+# IDEs
+.vscode/
+.idea/
+
+# Expo
+.expo/
+*.apk
+*.aab

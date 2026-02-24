@@ -11,6 +11,9 @@ import Campaigns from './pages/Campaigns';
 import Templates from './pages/Templates';
 import Billing from './pages/Billing';
 import Login from './pages/Login';
+import Fleet from './pages/Fleet';
+import Agreements from './pages/Agreements';
+import PublicReceipt from './pages/PublicReceipt';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Menu } from 'lucide-react';
 import './index.css';
@@ -52,6 +55,7 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<Login />} />
+                <Route path="/search/book/:busId" element={<PublicReceipt />} />
 
                 <Route path="/" element={
                     <ProtectedRoute>
@@ -61,13 +65,17 @@ function App() {
 
                 <Route path="/products" element={
                     <ProtectedRoute>
-                        <Layout><Products /></Layout>
+                        <Layout>
+                            {JSON.parse(localStorage.getItem('user') || '{}').industryType === 'TRANSPORT' ? <Fleet /> : <Products />}
+                        </Layout>
                     </ProtectedRoute>
                 } />
 
                 <Route path="/orders" element={
                     <ProtectedRoute>
-                        <Layout><Orders /></Layout>
+                        <Layout>
+                            {JSON.parse(localStorage.getItem('user') || '{}').industryType === 'TRANSPORT' ? <Agreements /> : <Orders />}
+                        </Layout>
                     </ProtectedRoute>
                 } />
 

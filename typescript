@@ -1,0 +1,26 @@
+Script started on Wed Feb 18 21:17:15 2026
+[1m[7m%[27m[1m[0m                                                                                                             [0m[27m[24m[Jadmin@ADMINs-MacBook-Air whatsapp-commerce-demo % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                                             [0m[27m[24m[Jadmin@ADMINs-MacBook-Air whatsapp-commerce-demo % [K[?2004hsssh root@193.203.160.3 "/opt/mssql-tools/bin/sqlcmd -S loca [Kllhost -U sa -P 'VMurugan@2025#SQL' -Q \"ALTER DATABASE WazfloDb SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP [K  DATABASE WazfloDb;\" && systemctl restart wazflo-api && sleep 8 && journalctl -u wazflo-api -n 20 --no-pager [K"[?2004l
+root@193.203.160.3's password: 
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+Feb 18 15:47:36 srv1236074 dotnet[329730]:          at Program.<Main>$(String[] args) in /var/www/wazflo_enterprise/backend-dotnet/Wazflo.Api/Program.cs:line 94
+Feb 18 15:47:36 srv1236074 dotnet[329730]:       ClientConnectionId:8c73e280-3c4a-488b-8e86-61e13881cbc6
+Feb 18 15:47:36 srv1236074 dotnet[329730]:       Error Number:1785,State:0,Class:16
+Feb 18 15:47:36 srv1236074 dotnet[329730]: info: Microsoft.Hosting.Lifetime[14]
+Feb 18 15:47:36 srv1236074 dotnet[329730]:       Now listening on: http://[::]:3005
+Feb 18 15:47:36 srv1236074 dotnet[329730]: info: Microsoft.Hosting.Lifetime[0]
+Feb 18 15:47:36 srv1236074 dotnet[329730]:       Application started. Press Ctrl+C to shut down.
+Feb 18 15:47:36 srv1236074 dotnet[329730]: info: Microsoft.Hosting.Lifetime[0]
+Feb 18 15:47:36 srv1236074 dotnet[329730]:       Hosting environment: Production
+Feb 18 15:47:36 srv1236074 dotnet[329730]: info: Microsoft.Hosting.Lifetime[0]
+Feb 18 15:47:36 srv1236074 dotnet[329730]:       Content root path: /var/www/wazflo_enterprise/api/publish
+[1m[7m%[27m[1m[0m                                                                                                             [0m[27m[24m[Jadmin@ADMINs-MacBook-Air whatsapp-commerce-demo % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                                             [0m[27m[24m[Jadmin@ADMINs-MacBook-Air whatsapp-commerce-demo % [K[?2004h

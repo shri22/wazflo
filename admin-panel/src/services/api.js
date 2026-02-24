@@ -15,6 +15,10 @@ api.interceptors.request.use((config) => {
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+    const storeId = localStorage.getItem('activeStoreId');
+    if (storeId) {
+        config.headers['X-Store-Id'] = storeId;
+    }
     return config;
 });
 
@@ -60,12 +64,25 @@ export const createVariant = (productId, data) => api.post(`/products/${productI
 export const updateVariant = (productId, variantId, data) => api.put(`/products/${productId}/variants/${variantId}`, data);
 export const deleteVariant = (productId, variantId) => api.delete(`/products/${productId}/variants/${variantId}`);
 
+// Buses (Transport)
+export const getBuses = () => api.get('/buses');
+export const createBus = (data) => api.post('/buses', data);
+export const updateBus = (id, data) => api.put(`/buses/${id}`, data);
+export const deleteBus = (id) => api.delete(`/buses/${id}`);
+
+// Agreements (Transport)
+export const getAgreements = () => api.get('/agreements');
+export const updateAgreementStatus = (id, status) => api.put(`/agreements/${id}/status`, { status });
+export const getAgreementStats = () => api.get('/agreements/stats');
+export const getAgreementRevenueReport = (days) => api.get(`/agreements/revenue-report?days=${days}`);
+
 // Orders
 export const getOrders = () => api.get('/orders');
 export const getOrder = (id) => api.get(`/orders/${id}`);
 export const updateOrderStatus = (id, status) => api.put(`/orders/${id}/status`, { status });
 export const getOrderStats = () => api.get('/orders/stats');
 export const getPlatformStats = () => api.get('/orders/platform-stats');
+export const getRevenueReport = (days) => api.get(`/orders/revenue-report?days=${days}`);
 
 // Stores
 export const getStores = () => api.get('/stores');

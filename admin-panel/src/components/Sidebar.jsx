@@ -1,17 +1,40 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingCart, MessageSquare, LogOut, Settings, CreditCard, LayoutTemplate, X, Send } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, MessageSquare, LogOut, Settings, CreditCard, LayoutTemplate, X, Send, Store } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { getStores } from '../services/api';
 
 export default function Sidebar({ isOpen, onClose }) {
     const location = useLocation();
     const navigate = useNavigate();
+    const [stores, setStores] = useState([]);
+    const [activeStoreId, setActiveStoreId] = useState(localStorage.getItem('activeStoreId') || '');
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const isSuperAdmin = user.isSuperAdmin === 1;
 
+    useEffect(() => {
+        if (isSuperAdmin) {
+            getStores().then(res => setStores(res.data.data)).catch(console.error);
+        }
+    }, [isSuperAdmin]);
+
+    const handleStoreChange = (e) => {
+        const id = e.target.value;
+        if (id === '') {
+            localStorage.removeItem('activeStoreId');
+        } else {
+            localStorage.setItem('activeStoreId', id);
+        }
+        setActiveStoreId(id);
+        window.location.reload(); // Refresh to update all data context
+    };
+
+    const isTransport = user.industryType === 'TRANSPORT';
+
     const navItems = [
         { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
-        { path: '/products', icon: Package, label: 'Products' },
-        { path: '/orders', icon: ShoppingCart, label: 'Orders' },
+        { path: '/products', icon: isTransport ? Store : Package, label: isTransport ? 'Fleet' : 'Products' },
+        { path: '/orders', icon: isTransport ? LayoutTemplate : ShoppingCart, label: isTransport ? 'Agreements' : 'Orders' },
         { path: '/messages', icon: MessageSquare, label: 'Messages' },
         { path: '/campaigns', icon: Send, label: 'Campaigns' },
         { path: '/templates', icon: LayoutTemplate, label: 'Templates' },
@@ -20,12 +43,13 @@ export default function Sidebar({ isOpen, onClose }) {
     ];
 
     if (isSuperAdmin) {
-        navItems.push({ path: '/stores', icon: LayoutDashboard, label: 'Stores' });
+        navItems.push({ path: '/stores', icon: Store, label: 'Stores' });
     }
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('activeStoreId');
         navigate('/login');
     };
 
@@ -40,6 +64,34 @@ export default function Sidebar({ isOpen, onClose }) {
                         <X size={24} />
                     </button>
                 </div>
+
+                {isSuperAdmin && (
+                    <div className="store-switcher" style={{ marginTop: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <Store size={14} color="var(--primary)" />
+                            <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-dim)' }}>SWITCH STORE</span>
+                        </div>
+                        <select
+                            value={activeStoreId}
+                            onChange={handleStoreChange}
+                            style={{
+                                width: '100%',
+                                padding: '8px',
+                                background: 'rgba(255,255,255,0.05)',
+                                color: 'white',
+                                border: '1px solid var(--border-glass)',
+                                borderRadius: '4px',
+                                fontSize: '0.85rem'
+                            }}
+                        >
+                            <option value="">Default Admin Store</option>
+                            {stores.map(s => (
+                                <option key={s.id} value={s.id}>{s.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
                 <div style={{ marginTop: '8px' }}>
                     <span style={{ fontSize: '0.8rem', opacity: 0.7, color: 'var(--text-dim)' }}>
                         {isSuperAdmin ? 'Platform Admin' : 'Store Panel'}

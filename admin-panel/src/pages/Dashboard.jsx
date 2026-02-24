@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
-import { getOrderStats, getOrders, getPlatformStats } from '../services/api';
-import { TrendingUp, ShoppingCart, DollarSign, Package, Users, Globe } from 'lucide-react';
+import { getOrderStats, getOrders, getPlatformStats, getRevenueReport, getAgreementStats, getAgreements, getAgreementRevenueReport } from '../services/api';
+import { TrendingUp, ShoppingCart, DollarSign, Package, Users, Globe, Truck, FileText, Calendar } from 'lucide-react';
 
 export default function Dashboard() {
     const [stats, setStats] = useState(null);
     const [platformStats, setPlatformStats] = useState(null);
     const [recentOrders, setRecentOrders] = useState([]);
+    const [revenueReport, setRevenueReport] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const isSuperAdmin = user.isSuperAdmin === 1;
+    const isTransport = user.industryType === 'TRANSPORT';
 
     useEffect(() => {
         loadData();
@@ -18,19 +20,31 @@ export default function Dashboard() {
     const loadData = async () => {
         try {
             if (isSuperAdmin) {
-                const [pStatsRes, ordersRes] = await Promise.all([
+                const [pStatsRes, ordersRes, reportRes] = await Promise.all([
                     getPlatformStats(),
-                    getOrders() // This will return all orders for SA or scoped if we changed backend, but currently backend scopes order.getAll by storeId in the controller. Wait, Order.getAll(storeId) in controller uses req.admin.storeId. For SA, storeId is likely the SA's own store. 
+                    getOrders(),
+                    getRevenueReport(7)
                 ]);
                 setPlatformStats(pStatsRes.data.data);
-                // SA might want to see latest orders across ALL stores? 
+                setRevenueReport(reportRes.data.data);
+            } else if (isTransport) {
+                const [statsRes, agreeRes, reportRes] = await Promise.all([
+                    getAgreementStats(),
+                    getAgreements(),
+                    getAgreementRevenueReport(7)
+                ]);
+                setStats(statsRes.data.data);
+                setRecentOrders(agreeRes.data.data.slice(0, 10)); // Reusing recentOrders state for simplicity
+                setRevenueReport(reportRes.data.data);
             } else {
-                const [statsRes, ordersRes] = await Promise.all([
+                const [statsRes, ordersRes, reportRes] = await Promise.all([
                     getOrderStats(),
-                    getOrders()
+                    getOrders(),
+                    getRevenueReport(7)
                 ]);
                 setStats(statsRes.data.data);
                 setRecentOrders(ordersRes.data.data.slice(0, 10));
+                setRevenueReport(reportRes.data.data);
             }
         } catch (error) {
             console.error('Error loading dashboard data:', error);
@@ -74,6 +88,35 @@ export default function Dashboard() {
             value: 'All States',
             change: 'National',
             icon: Globe,
+            positive: true
+        }
+    ] : isTransport ? [
+        {
+            label: 'Today\'s Bookings',
+            value: stats?.today?.count || 0,
+            change: 'New',
+            icon: Calendar,
+            positive: true
+        },
+        {
+            label: 'Today\'s Revenue',
+            value: `₹${stats?.today?.revenue || 0}`,
+            change: 'Confirmed',
+            icon: DollarSign,
+            positive: true
+        },
+        {
+            label: 'This Week',
+            value: stats?.week?.count || 0,
+            change: 'Recent trips',
+            icon: TrendingUp,
+            positive: true
+        },
+        {
+            label: 'Total Fleet',
+            value: 'Active',
+            change: 'All Vehicles',
+            icon: Truck,
             positive: true
         }
     ] : [
@@ -134,11 +177,50 @@ export default function Dashboard() {
                 })}
             </div>
 
-            <div className="card">
+            <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
                 <div className="card-header">
-                    <h2 className="card-title">{isSuperAdmin ? 'Top Performing Stores' : 'Recent Orders'}</h2>
+                    <h2 className="card-title">7-Day Revenue Report</h2>
                 </div>
+                <div className="chart-container" style={{
+                    height: '250px',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    gap: '20px',
+                    padding: '20px',
+                    justifyContent: 'space-around'
+                }}>
+                    {revenueReport.length === 0 ? (
+                        <p className="text-muted">No data available for this period</p>
+                    ) : (
+                        revenueReport.map((day, idx) => {
+                            const maxRev = Math.max(...revenueReport.map(d => d.revenue), 1000);
+                            const height = (day.revenue / maxRev) * 100;
+                            return (
+                                <div key={idx} style={{
+                                    flex: 1,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: '10px'
+                                }}>
+                                    <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>₹{day.revenue}</span>
+                                    <div style={{
+                                        width: '100%',
+                                        height: `${height}%`,
+                                        background: 'linear-gradient(to top, var(--primary), var(--secondary))',
+                                        borderRadius: '4px',
+                                        minHeight: '4px',
+                                        transition: 'height 1s ease-in-out'
+                                    }}></div>
+                                    <span style={{ fontSize: '0.7rem', color: 'white' }}>{day.date.split('-').slice(1).join('/')}</span>
+                                </div>
+                            );
+                        })
+                    )}
+                </div>
+            </div>
 
+            <div className="card">
                 {isSuperAdmin ? (
                     <div className="table-container">
                         <table className="table">
@@ -160,6 +242,46 @@ export default function Dashboard() {
                             </tbody>
                         </table>
                     </div>
+                ) : isTransport ? (
+                    recentOrders.length === 0 ? (
+                        <p className="text-muted">No bookings yet</p>
+                    ) : (
+                        <div className="table-container">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Agreement #</th>
+                                        <th>Customer</th>
+                                        <th>Bus / Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>From Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {recentOrders.map((booking) => (
+                                        <tr key={booking.id}>
+                                            <td className="font-bold">{booking.agreementId}</td>
+                                            <td>{booking.customerName}</td>
+                                            <td>
+                                                <div>{booking.bus?.name || 'Bus assigned'}</div>
+                                                <div className="text-xs text-muted">{booking.busType}</div>
+                                            </td>
+                                            <td className="font-bold">₹{booking.totalAmount}</td>
+                                            <td>
+                                                <span className={`badge ${booking.status === 'confirmed' ? 'badge-paid' : 'badge-pending'}`}>
+                                                    {booking.status}
+                                                </span>
+                                            </td>
+                                            <td className="text-sm text-muted">
+                                                {new Date(booking.fromDate).toLocaleDateString()}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )
                 ) : (
                     recentOrders.length === 0 ? (
                         <p className="text-muted">No orders yet</p>

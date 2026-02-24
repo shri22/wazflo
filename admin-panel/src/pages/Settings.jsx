@@ -9,7 +9,13 @@ export default function Settings() {
         whatsapp_access_token: '',
         whatsapp_verify_token: '',
         razorpay_key_id: '',
-        razorpay_key_secret: ''
+        razorpay_key_secret: '',
+        industry_type: 'COMMERCE',
+        ai_persona: '',
+        external_api_type: 'NONE',
+        external_api_url: '',
+        external_api_key: '',
+        external_api_secret: ''
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -35,7 +41,17 @@ export default function Settings() {
         setSaving(true);
         try {
             await updateStoreSettings(settings);
-            alert('Settings updated successfully!');
+
+            // Update local user industry type for immediate UI change
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user.industryType !== settings.industry_type) {
+                user.industryType = settings.industry_type;
+                localStorage.setItem('user', JSON.stringify(user));
+                alert('Industry updated! Refreshing dashboard...');
+                window.location.reload();
+            } else {
+                alert('Settings updated successfully!');
+            }
         } catch (error) {
             console.error('Error updating settings:', error);
             alert('Failed to update settings');
@@ -65,10 +81,32 @@ export default function Settings() {
                 <div className="card">
                     <div className="card-header">
                         <MessageSquare className="text-primary" />
-                        <h2>WhatsApp Configuration</h2>
+                        <h2>Store Configuration</h2>
                     </div>
                     <div className="form-group">
-                        <label>Phone Number ID</label>
+                        <label>Business Module / Industry</label>
+                        <select
+                            className="form-select"
+                            value={settings.industry_type || 'COMMERCE'}
+                            onChange={(e) => setSettings({ ...settings, industry_type: e.target.value })}
+                            style={{ width: '100%', padding: '10px', background: 'var(--bg-main)', color: 'white', border: '1px solid var(--border)' }}
+                        >
+                            <option value="COMMERCE">📦 Bharat Commerce (Retail/Products)</option>
+                            <option value="TRANSPORT">🚌 Fleet Booking (Buses/Travels)</option>
+                        </select>
+                        <p className="field-hint">Note: Changing this will reload your dashboard with different tools.</p>
+                    </div>
+                    <div className="form-group">
+                        <label>Store Name</label>
+                        <input
+                            type="text"
+                            value={settings.name}
+                            onChange={(e) => setSettings({ ...settings, name: e.target.value })}
+                            placeholder="Store Name"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>WhatsApp Phone Number ID</label>
                         <input
                             type="text"
                             value={settings.whatsapp_phone_number_id}
@@ -142,6 +180,77 @@ export default function Settings() {
                             placeholder="••••••••••••"
                         />
                     </div>
+                </div>
+
+                <div className="card">
+                    <div className="card-header">
+                        <Save className="text-secondary" />
+                        <h2>AI Persona & Branding</h2>
+                    </div>
+                    <div className="form-group">
+                        <label>Bot Personality / AI Persona</label>
+                        <textarea
+                            value={settings.ai_persona || ''}
+                            onChange={(e) => setSettings({ ...settings, ai_persona: e.target.value })}
+                            placeholder="e.g. Friendly travel assistant for Airavat Gold Travels. Use a polite tone."
+                            rows={3}
+                        />
+                        <p className="field-hint">Defines how the bot greets and talks to your customers.</p>
+                    </div>
+                </div>
+
+                <div className="card">
+                    <div className="card-header">
+                        <Globe className="text-accent" />
+                        <h2>External API Integration (Transport)</h2>
+                    </div>
+                    <div className="form-group">
+                        <label>External Provider</label>
+                        <select
+                            className="form-select"
+                            value={settings.external_api_type || 'NONE'}
+                            onChange={(e) => setSettings({ ...settings, external_api_type: e.target.value })}
+                            style={{ width: '100%', padding: '10px', background: 'var(--bg-main)', color: 'white', border: '1px solid var(--border)' }}
+                        >
+                            <option value="NONE">🚀 Use Wazflo Internal Fleet Dashboard</option>
+                            <option value="BITLA">🚍 Bitla GDS / API</option>
+                            <option value="REDBUS">🚃 RedBus / API</option>
+                            <option value="GENERIC">🔗 Generic JSON API</option>
+                        </select>
+                        <p className="field-hint">Choose 'NONE' if you want to manage buses manually in the Wazflo dashboard.</p>
+                    </div>
+
+                    {settings.external_api_type !== 'NONE' && (
+                        <>
+                            <div className="form-group">
+                                <label>API Base URL</label>
+                                <input
+                                    type="text"
+                                    value={settings.external_api_url || ''}
+                                    onChange={(e) => setSettings({ ...settings, external_api_url: e.target.value })}
+                                    placeholder="https://api.provider.com/v1"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>API Key / Client ID</label>
+                                <input
+                                    type="text"
+                                    value={settings.external_api_key || ''}
+                                    onChange={(e) => setSettings({ ...settings, external_api_key: e.target.value })}
+                                    placeholder="Enter your API Key"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>API Secret / Token</label>
+                                <input
+                                    type="password"
+                                    value={settings.external_api_secret || ''}
+                                    onChange={(e) => setSettings({ ...settings, external_api_secret: e.target.value })}
+                                    placeholder="••••••••••••"
+                                />
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* AUTOMATION RULES SECTION */}

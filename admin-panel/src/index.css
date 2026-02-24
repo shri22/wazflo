@@ -937,3 +937,37 @@ h6 {
   border-color: var(--primary);
   box-shadow: 0 15px 30px -10px var(--primary-glow);
 }
+
+/* Multi-Store Switcher */
+.store-switcher select {
+  appearance: none;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.store-switcher select:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.store-switcher option {
+  background: var(--bg-primary);
+  color: white;
+}
+
+/* Dashboard Chart */
+.chart-container>div {
+  transition: transform 0.2s ease;
+}
+
+.chart-container>div:hover {
+  transform: translateY(-5px);
+}
+
+.chart-container div:hover div {
+  filter: brightness(1.2);
+  box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.chart-container div:hover span {
+  color: var(--primary-light) !important;
+}
