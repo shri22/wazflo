@@ -10,13 +10,20 @@ export default function Stores() {
     const [editingId, setEditingId] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
-        whatsapp_phone_number_id: '',
-        whatsapp_access_token: '',
-        whatsapp_verify_token: 'WazfloToken',
-        razorpay_key_id: '',
-        razorpay_key_secret: '',
-        admin_username: '',
-        admin_password: ''
+        whatsappPhoneNumberId: '',
+        whatsappAccessToken: '',
+        whatsappVerifyToken: 'WazfloToken',
+        razorpayKeyId: '',
+        razorpayKeySecret: '',
+        adminUsername: '',
+        adminPassword: '',
+        industryType: 'COMMERCE',
+        schemaGetUrl: '',
+        submissionPostUrl: '',
+        dashboardGetUrl: '',
+        externalApiType: 'NONE',
+        externalApiUrl: '',
+        externalApiKey: ''
     });
 
     useEffect(() => {
@@ -38,8 +45,8 @@ export default function Stores() {
         setEditingId(store.id);
         setFormData({
             ...store,
-            admin_username: 'HIDDEN', // Password/Username editing logic can be separate
-            admin_password: 'HIDDEN'
+            adminUsername: 'HIDDEN',
+            adminPassword: 'HIDDEN'
         });
         setShowModal(true);
     };
@@ -77,13 +84,20 @@ export default function Stores() {
         setEditingId(null);
         setFormData({
             name: '',
-            whatsapp_phone_number_id: '',
-            whatsapp_access_token: '',
-            whatsapp_verify_token: 'WazfloToken',
-            razorpay_key_id: '',
-            razorpay_key_secret: '',
-            admin_username: '',
-            admin_password: ''
+            whatsappPhoneNumberId: '',
+            whatsappAccessToken: '',
+            whatsappVerifyToken: 'WazfloToken',
+            razorpayKeyId: '',
+            razorpayKeySecret: '',
+            adminUsername: '',
+            adminPassword: '',
+            industryType: 'COMMERCE',
+            schemaGetUrl: '',
+            submissionPostUrl: '',
+            dashboardGetUrl: '',
+            externalApiType: 'NONE',
+            externalApiUrl: '',
+            externalApiKey: ''
         });
     };
 
@@ -150,7 +164,7 @@ export default function Stores() {
                                             </div>
                                         </td>
                                         <td>
-                                            <div className="font-bold text-success">₹{store.wallet_balance?.toFixed(2)}</div>
+                                            <div className="font-bold text-success">₹{store.walletBalance?.toFixed(2)}</div>
                                             <button
                                                 className="link-btn"
                                                 onClick={() => {
@@ -161,11 +175,18 @@ export default function Stores() {
                                                 + Add
                                             </button>
                                         </td>
-                                        <td>{store.whatsapp_phone_number_id}</td>
+                                        <td>{store.whatsappPhoneNumberId}</td>
                                         <td>
-                                            <span className={`badge ${store.whatsapp_phone_number_id.startsWith('PENDING') ? 'badge-pending' : 'badge-paid'}`}>
-                                                {store.whatsapp_phone_number_id.startsWith('PENDING') ? 'Pending Config' : 'Active'}
-                                            </span>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                <span className={`badge ${store.whatsappPhoneNumberId?.startsWith('PENDING') ? 'badge-pending' : 'badge-paid'}`}>
+                                                    {store.whatsappPhoneNumberId?.startsWith('PENDING') ? 'Pending Config' : 'Active'}
+                                                </span>
+                                                {store.schemaGetUrl && (
+                                                    <span className="badge" style={{ background: 'rgba(124, 58, 237, 0.1)', color: '#7c3aed', fontSize: '0.65rem' }}>
+                                                        Dynamic API
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td>
                                             <div className="flex gap-sm">
@@ -209,6 +230,22 @@ export default function Stores() {
                                 />
                             </div>
 
+                            <div className="form-group">
+                                <label className="form-label">Industry / Business Type *</label>
+                                <select
+                                    className="form-input"
+                                    value={formData.industryType}
+                                    onChange={(e) => setFormData({ ...formData, industryType: e.target.value })}
+                                    required
+                                >
+                                    <option value="PLATFORM">Official Wazflo Platform Bot ⭐</option>
+                                    <option value="DAKROOT">Dakroot Agency (Marketing & Tech) 🚀</option>
+                                    <option value="COMMERCE">Standard E-Commerce (Retail)</option>
+                                    <option value="TRANSPORT">Travels & Fleet (Bus Booking)</option>
+                                    <option value="DYNAMIC">Dynamic API Partner (Custom Backend)</option>
+                                </select>
+                            </div>
+
                             <div className="form-section-title">WhatsApp API Keys</div>
                             <div className="grid grid-2 gap-md">
                                 <div className="form-group">
@@ -216,8 +253,8 @@ export default function Stores() {
                                     <input
                                         type="text"
                                         className="form-input"
-                                        value={formData.whatsapp_phone_number_id}
-                                        onChange={(e) => setFormData({ ...formData, whatsapp_phone_number_id: e.target.value })}
+                                        value={formData.whatsappPhoneNumberId}
+                                        onChange={(e) => setFormData({ ...formData, whatsappPhoneNumberId: e.target.value })}
                                         required
                                     />
                                 </div>
@@ -226,8 +263,8 @@ export default function Stores() {
                                     <input
                                         type="text"
                                         className="form-input"
-                                        value={formData.whatsapp_verify_token}
-                                        onChange={(e) => setFormData({ ...formData, whatsapp_verify_token: e.target.value })}
+                                        value={formData.whatsappVerifyToken}
+                                        onChange={(e) => setFormData({ ...formData, whatsappVerifyToken: e.target.value })}
                                     />
                                 </div>
                             </div>
@@ -235,8 +272,8 @@ export default function Stores() {
                                 <label className="form-label">Access Token</label>
                                 <textarea
                                     className="form-textarea"
-                                    value={formData.whatsapp_access_token}
-                                    onChange={(e) => setFormData({ ...formData, whatsapp_access_token: e.target.value })}
+                                    value={formData.whatsappAccessToken}
+                                    onChange={(e) => setFormData({ ...formData, whatsappAccessToken: e.target.value })}
                                     rows={2}
                                 />
                             </div>
@@ -248,8 +285,8 @@ export default function Stores() {
                                     <input
                                         type="text"
                                         className="form-input"
-                                        value={formData.razorpay_key_id}
-                                        onChange={(e) => setFormData({ ...formData, razorpay_key_id: e.target.value })}
+                                        value={formData.razorpayKeyId}
+                                        onChange={(e) => setFormData({ ...formData, razorpayKeyId: e.target.value })}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -257,8 +294,8 @@ export default function Stores() {
                                     <input
                                         type="password"
                                         className="form-input"
-                                        value={formData.razorpay_key_secret}
-                                        onChange={(e) => setFormData({ ...formData, razorpay_key_secret: e.target.value })}
+                                        value={formData.razorpayKeySecret}
+                                        onChange={(e) => setFormData({ ...formData, razorpayKeySecret: e.target.value })}
                                     />
                                 </div>
                             </div>
@@ -272,8 +309,8 @@ export default function Stores() {
                                             <input
                                                 type="text"
                                                 className="form-input"
-                                                value={formData.admin_username}
-                                                onChange={(e) => setFormData({ ...formData, admin_username: e.target.value })}
+                                                value={formData.adminUsername}
+                                                onChange={(e) => setFormData({ ...formData, adminUsername: e.target.value })}
                                                 required
                                             />
                                         </div>
@@ -282,14 +319,85 @@ export default function Stores() {
                                             <input
                                                 type="password"
                                                 className="form-input"
-                                                value={formData.admin_password}
-                                                onChange={(e) => setFormData({ ...formData, admin_password: e.target.value })}
+                                                value={formData.adminPassword}
+                                                onChange={(e) => setFormData({ ...formData, adminPassword: e.target.value })}
                                                 required
                                             />
                                         </div>
                                     </div>
                                 </>
                             )}
+
+                            <div className="form-section-title">External API Integration (Native Adapters)</div>
+                            <div className="form-group">
+                                <label className="form-label">Adapter Type</label>
+                                <select
+                                    className="form-input"
+                                    value={formData.externalApiType}
+                                    onChange={(e) => setFormData({ ...formData, externalApiType: e.target.value })}
+                                >
+                                    <option value="NONE">No External API (Wazflo Native)</option>
+                                    <option value="SAI_SENTHIL">Sri Sai Senthil Travels Adapter</option>
+                                    <option value="BITLA">Bitla GDS Adapter</option>
+                                </select>
+                            </div>
+
+                            {formData.external_api_type !== 'NONE' && (
+                                <div className="grid grid-2 gap-md">
+                                    <div className="form-group">
+                                        <label className="form-label">API Base URL</label>
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            value={formData.externalApiUrl}
+                                            onChange={(e) => setFormData({ ...formData, externalApiUrl: e.target.value })}
+                                            placeholder="https://api.partner.com"
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">API Access Token</label>
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            value={formData.externalApiKey}
+                                            onChange={(e) => setFormData({ ...formData, externalApiKey: e.target.value })}
+                                            placeholder="Bearer Token"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="form-section-title">Dynamic API Configuration (Super Admin)</div>
+                            <div className="form-group">
+                                <label className="form-label">Schema GET URL (Bot Flow)</label>
+                                <input
+                                    type="url"
+                                    className="form-input"
+                                    value={formData.schemaGetUrl || ''}
+                                    onChange={(e) => setFormData({ ...formData, schemaGetUrl: e.target.value })}
+                                    placeholder="https://partner-api.com/bot-schema"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Submission POST URL (Booking Creation)</label>
+                                <input
+                                    type="url"
+                                    className="form-input"
+                                    value={formData.submissionPostUrl || ''}
+                                    onChange={(e) => setFormData({ ...formData, submissionPostUrl: e.target.value })}
+                                    placeholder="https://partner-api.com/book"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Dashboard GET URL (Analytics)</label>
+                                <input
+                                    type="url"
+                                    className="form-input"
+                                    value={formData.dashboardGetUrl || ''}
+                                    onChange={(e) => setFormData({ ...formData, dashboardGetUrl: e.target.value })}
+                                    placeholder="https://partner-api.com/wazflo-dashboard"
+                                />
+                            </div>
 
                             <div className="flex gap-md mt-lg">
                                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>

@@ -20,7 +20,10 @@ namespace Wazflo.Api.Services
             {
                 return await SearchBitlaBuses(url, key, secret, fromDate, toDate, city, type);
             }
-            // Add other providers here
+            if (apiType == "SAI_SENTHIL")
+            {
+                return await SearchSaiSenthilBuses(url, fromDate, toDate, city, type);
+            }
             
             return new List<ExternalBusSearchResult>();
         }
@@ -31,8 +34,90 @@ namespace Wazflo.Api.Services
             {
                 return await BookBitlaBus(url, key, secret, request);
             }
+            if (apiType == "SAI_SENTHIL")
+            {
+                return await BookSaiSenthilBus(url, request);
+            }
             
             return new ExternalBookingResult { Success = false, ErrorMessage = "Unsupported API Type" };
+        }
+
+        private async Task<List<ExternalBusSearchResult>> SearchSaiSenthilBuses(string url, string fromDate, string toDate, string city, string type)
+        {
+            try
+            {
+                // Mapping to: GET https://srisaisenthiltravels.cloud/api/public/search?fromDate=Y-M-D&toDate=Y-M-D&city=Chennai
+                var requestUrl = $"{url.TrimEnd('/')}/api/public/search?fromDate={fromDate}&toDate={toDate}&city={city}";
+                
+                var response = await _httpClient.GetAsync(requestUrl);
+                if (!response.IsSuccessStatusCode) return new List<ExternalBusSearchResult>();
+
+                var content = await response.Content.ReadAsStringAsync();
+                // Assume the partner returns a list of buses in a 'buses' array or direct array
+                var data = JsonConvert.DeserializeObject<JToken>(content);
+                var buses = (data is JObject obj && obj.ContainsKey("buses")) ? obj["buses"] as JArray : data as JArray;
+
+                var results = new List<ExternalBusSearchResult>();
+                if (buses != null)
+                {
+                    foreach (var b in buses)
+                    {
+                        results.Add(new ExternalBusSearchResult
+                        {
+                            ExternalId = b["id"]?.ToString() ?? "",
+                            Name = b["name"]?.ToString() ?? b["busName"]?.ToString() ?? "Sai Senthil Bus",
+                            Rate = b["price"]?.Value<decimal>() ?? b["fare"]?.Value<decimal>() ?? 0,
+                            Capacity = b["availableSeats"]?.Value<int>() ?? 40,
+                            Type = type
+                        });
+                    }
+                }
+
+                return results;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Sai Senthil Search Error: {ex.Message}");
+                return new List<ExternalBusSearchResult>();
+            }
+        }
+
+        private async Task<ExternalBookingResult> BookSaiSenthilBus(string url, ExternalBookingRequest request)
+        {
+            try
+            {
+                // Mapping to: POST https://srisaisenthiltravels.cloud/api/public/book
+                var requestUrl = $"{url.TrimEnd('/')}/api/public/book";
+                var payload = new
+                {
+                    busId = request.ExternalBusId,
+                    name = request.CustomerName,
+                    phone = request.Phone,
+                    fromDate = request.FromDate,
+                    toDate = request.ToDate,
+                    passengers = request.Passengers,
+                    route = request.Route
+                };
+
+                var response = await _httpClient.PostAsync(requestUrl, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = JsonConvert.DeserializeObject<JObject>(content);
+                    return new ExternalBookingResult 
+                    { 
+                        Success = true, 
+                        ExternalBookingId = data?["bookingId"]?.ToString() ?? data?["id"]?.ToString() 
+                    };
+                }
+
+                return new ExternalBookingResult { Success = false, ErrorMessage = content };
+            }
+            catch (Exception ex)
+            {
+                return new ExternalBookingResult { Success = false, ErrorMessage = ex.Message };
+            }
         }
 
         private async Task<List<ExternalBusSearchResult>> SearchBitlaBuses(string url, string key, string secret, string fromDate, string toDate, string city, string type)

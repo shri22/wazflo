@@ -30,17 +30,22 @@ export default function Sidebar({ isOpen, onClose }) {
     };
 
     const isTransport = user.industryType === 'TRANSPORT';
+    const hasDynamic = user.hasDynamicDashboard;
 
-    const navItems = [
+    let navItems = [
         { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
-        { path: '/products', icon: isTransport ? Store : Package, label: isTransport ? 'Fleet' : 'Products' },
-        { path: '/orders', icon: isTransport ? LayoutTemplate : ShoppingCart, label: isTransport ? 'Agreements' : 'Orders' },
+        { path: '/products', icon: isTransport ? Store : Package, label: isTransport ? 'Fleet' : 'Products', hideOnDynamic: true },
+        { path: '/orders', icon: isTransport ? LayoutTemplate : ShoppingCart, label: isTransport ? 'Agreements' : 'Orders', hideOnDynamic: true },
         { path: '/messages', icon: MessageSquare, label: 'Messages' },
         { path: '/campaigns', icon: Send, label: 'Campaigns' },
         { path: '/templates', icon: LayoutTemplate, label: 'Templates' },
         { path: '/billing', icon: CreditCard, label: 'Billing' },
         { path: '/settings', icon: Settings, label: 'Settings' },
     ];
+
+    if (hasDynamic) {
+        navItems = navItems.filter(item => !item.hideOnDynamic);
+    }
 
     if (isSuperAdmin) {
         navItems.push({ path: '/stores', icon: Store, label: 'Stores' });

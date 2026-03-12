@@ -19,6 +19,7 @@ namespace Wazflo.Api.DTOs
         public int? StoreId { get; set; }
         public int IsSuperAdmin { get; set; }
         public string? IndustryType { get; set; }
+        public bool HasDynamicDashboard { get; set; }
         public string Token { get; set; } = string.Empty;
     }
 }

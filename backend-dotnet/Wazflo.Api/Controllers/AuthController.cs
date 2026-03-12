@@ -46,6 +46,7 @@ namespace Wazflo.Api.Controllers
                             StoreId = user.StoreId,
                             IsSuperAdmin = user.IsSuperAdmin ? 1 : 0,
                             IndustryType = user.Store?.IndustryType ?? "COMMERCE",
+                            HasDynamicDashboard = !string.IsNullOrEmpty(user.Store?.DashboardGetUrl),
                             Token = token
                         }
                     });
@@ -91,6 +92,7 @@ namespace Wazflo.Api.Controllers
                         message_cost = user.Store.MessageCost,
                         is_active = user.Store.IsActive,
                         industry_type = user.Store.IndustryType ?? "COMMERCE",
+                        has_dynamic_dashboard = !string.IsNullOrEmpty(user.Store.DashboardGetUrl),
                         whatsapp_phone_number_id = user.Store.WhatsappPhoneNumberId,
                         support_phone = user.Store.SupportPhone
                     }

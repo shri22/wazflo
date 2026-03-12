@@ -31,6 +31,10 @@ namespace Wazflo.Api.Models
         public string? ExternalApiKey { get; set; }
         public string? ExternalApiSecret { get; set; }
         
+        public string? SchemaGetUrl { get; set; }
+        public string? SubmissionPostUrl { get; set; }
+        public string? DashboardGetUrl { get; set; }
+        
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

@@ -107,4 +107,7 @@ export const getBroadcasts = () => api.get('/platform/broadcasts');
 export const createBroadcast = (data) => api.post('/platform/broadcasts', data);
 export const addStoreBalance = (id, amount) => api.post(`/platform/stores/${id}/balance`, { amount });
 
+// Dynamic API Proxy
+export const getDynamicDashboard = () => api.get('/dynamic/dashboard');
+
 export default api;

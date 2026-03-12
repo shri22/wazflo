@@ -54,6 +54,13 @@ namespace Wazflo.Api.Controllers
                         WhatsappVerifyToken = request.WhatsappVerifyToken,
                         RazorpayKeyId = request.RazorpayKeyId,
                         RazorpayKeySecret = request.RazorpayKeySecret,
+                        SchemaGetUrl = request.SchemaGetUrl,
+                        SubmissionPostUrl = request.SubmissionPostUrl,
+                        DashboardGetUrl = request.DashboardGetUrl,
+                        IndustryType = request.IndustryType ?? "COMMERCE",
+                        ExternalApiType = request.ExternalApiType,
+                        ExternalApiUrl = request.ExternalApiUrl,
+                        ExternalApiKey = request.ExternalApiKey,
                         CreatedAt = DateTime.UtcNow
                     };
 
@@ -117,6 +124,9 @@ namespace Wazflo.Api.Controllers
             store.ExternalApiUrl = settings.ExternalApiUrl;
             store.ExternalApiKey = settings.ExternalApiKey;
             store.ExternalApiSecret = settings.ExternalApiSecret;
+            store.SchemaGetUrl = settings.SchemaGetUrl;
+            store.SubmissionPostUrl = settings.SubmissionPostUrl;
+            store.DashboardGetUrl = settings.DashboardGetUrl;
 
             await _context.SaveChangesAsync();
 
@@ -148,6 +158,13 @@ namespace Wazflo.Api.Controllers
             public string? RazorpayKeySecret { get; set; }
             public string Username { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
+            public string? IndustryType { get; set; }
+            public string? SchemaGetUrl { get; set; }
+            public string? SubmissionPostUrl { get; set; }
+            public string? DashboardGetUrl { get; set; }
+            public string? ExternalApiType { get; set; }
+            public string? ExternalApiUrl { get; set; }
+            public string? ExternalApiKey { get; set; }
         }
     }
 }

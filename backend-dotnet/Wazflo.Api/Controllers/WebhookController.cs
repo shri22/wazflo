@@ -9,21 +9,23 @@ namespace Wazflo.Api.Controllers
 {
     [ApiController]
     [Route("webhook")]
-    public class WebhookController : ControllerBase
+    public partial class WebhookController : ControllerBase
     {
         private readonly WazfloDbContext _context;
         private readonly IWhatsAppService _whatsappService;
         private readonly IBillingService _billingService;
         private readonly IBusExternalApiService _externalApiService;
         private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
 
-        public WebhookController(WazfloDbContext context, IWhatsAppService whatsappService, IBillingService billingService, IBusExternalApiService externalApiService, IConfiguration configuration)
+        public WebhookController(WazfloDbContext context, IWhatsAppService whatsappService, IBillingService billingService, IBusExternalApiService externalApiService, IConfiguration configuration, HttpClient httpClient)
         {
             _context = context;
             _whatsappService = whatsappService;
             _billingService = billingService;
             _externalApiService = externalApiService;
             _configuration = configuration;
+            _httpClient = httpClient;
         }
 
         [HttpGet("whatsapp")]
@@ -109,7 +111,19 @@ namespace Wazflo.Api.Controllers
             await _context.SaveChangesAsync();
 
             // Branch by Industry
-            if (store.IndustryType == "TRANSPORT")
+            if (store.IndustryType == "PLATFORM")
+            {
+                await HandlePlatformFlowAsync(customerPhone, messageBody ?? "", store);
+            }
+            else if (store.IndustryType == "DAKROOT")
+            {
+                await HandleDakrootFlowAsync(customerPhone, messageBody ?? "", store);
+            }
+            else if (!string.IsNullOrEmpty(store.SchemaGetUrl))
+            {
+                await HandleDynamicFlowAsync(customerPhone, messageBody ?? "", store);
+            }
+            else if (store.IndustryType == "TRANSPORT")
             {
                 await HandleTransportFlowAsync(customerPhone, messageBody ?? "", store);
             }
@@ -117,6 +131,155 @@ namespace Wazflo.Api.Controllers
             {
                 await HandleCommerceFlowAsync(customerPhone, messageBody ?? "", store);
             }
+        }
+
+        private async Task HandleDakrootFlowAsync(string phone, string text, Store store)
+        {
+            var state = await _context.ConversationStates.FirstOrDefaultAsync(s => s.StoreId == store.Id && s.Phone == phone);
+            if (state == null)
+            {
+                state = new ConversationState { StoreId = store.Id, Phone = phone, CurrentStep = "IDLE" };
+                _context.ConversationStates.Add(state);
+            }
+
+            string reply = "";
+            text = text.Trim().ToLower();
+
+            if (text == "hi" || text == "hello" || text == "start" || text == "reset")
+            {
+                state.CurrentStep = "MENU";
+                reply = "🚀 *Welcome to Dakroot!* 🚀\n\nWe bridge the gap between Data and Creativity. How can we help you scale today?\n\n1️⃣ *Explore Our Services*\n2️⃣ *Book a Free Consultation*\n3️⃣ *Industries We Serve*\n4️⃣ *Review Our Story (About Us)*\n5️⃣ *Connect with an Expert*";
+            }
+            else if (state.CurrentStep == "MENU")
+            {
+                if (text == "1")
+                {
+                    reply = "💻 *Dakroot Services:*\n\n📈 *Digital Marketing:* SEO, SMM, Ads, Audit\n🛠️ *Tech Solutions:* Web Design, Software Dev\n🎨 *Creative:* Branding, UI/UX, Content Branding\n\nReply *'2'* for Free Consultation or *'START'* for menu.";
+                }
+                else if (text == "2")
+                {
+                    state.CurrentStep = "DAKROOT_LEAD_START";
+                    reply = "💡 Great choice! To get started, please tell us your *Full Name* and *Business Type*.";
+                }
+                else if (text == "3")
+                {
+                    reply = "🌍 *Industries We Empower:*\n- Retail & E-Commerce\n- Healthcare & Fitness\n- SaaS & Technology\n- Real Estate & Hotels\n\nWe provide tailored strategies for each niche!";
+                }
+                else if (text == "4")
+                {
+                    reply = "ℹ️ *Our Philosophy:*\nWe *Organize, Adapt, Innovate, and Deliver*. Based in Bengaluru, we have a global reach in digital transformations.\n\n*Email:* info@dakroot.com\n*Tel:* 04342 355 191";
+                }
+                else if (text == "5")
+                {
+                    state.CurrentStep = "DAKROOT_TALK_EXPERT";
+                    reply = "One of our experts will join this chat briefly. Please tell us your primary *Goal* for this year in one sentence.";
+                }
+                else
+                {
+                    reply = "Please choose a number from the menu (1-5). Type *'HI'* to see the menu.";
+                }
+            }
+            else if (state.CurrentStep == "DAKROOT_LEAD_START")
+            {
+                var leadLog = new UsageLog {
+                    StoreId = store.Id,
+                    Type = "dakroot_consultation_lead",
+                    Details = $"Lead from {phone}: {text}",
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.UsageLogs.Add(leadLog);
+                state.CurrentStep = "IDLE";
+                reply = "✅ *Thank you!* We have received your request. We will contact you soon. If you'd like to book a specific time, use: calendly.com/dakroot/digital_growth";
+            }
+            else if (state.CurrentStep == "DAKROOT_TALK_EXPERT")
+            {
+                var expertLog = new UsageLog {
+                    StoreId = store.Id,
+                    Type = "dakroot_expert_request",
+                    Details = $"Expert request from {phone}: {text}",
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.UsageLogs.Add(expertLog);
+                state.CurrentStep = "IDLE";
+                reply = "✅ Expert notified. Please hold for 2 minutes while we connect you to our consultant.";
+            }
+
+            if (!string.IsNullOrEmpty(reply))
+            {
+                await _whatsappService.SendTextMessageAsync(phone, reply, store.WhatsappPhoneNumberId!, store.WhatsappAccessToken ?? "");
+            }
+
+            state.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task HandlePlatformFlowAsync(string phone, string text, Store store)
+        {
+            var state = await _context.ConversationStates.FirstOrDefaultAsync(s => s.StoreId == store.Id && s.Phone == phone);
+            if (state == null)
+            {
+                state = new ConversationState { StoreId = store.Id, Phone = phone, CurrentStep = "IDLE" };
+                _context.ConversationStates.Add(state);
+            }
+
+            string reply = "";
+            text = text.Trim().ToLower();
+
+            if (text == "hi" || text == "hello" || text == "start" || text == "reset")
+            {
+                state.CurrentStep = "MENU";
+                reply = "🌟 *Welcome to Wazflo!* 🌟\n\nThe #1 WhatsApp Automation Platform for South Asia.\n\nHow can we help your business grow today?\n\n1️⃣ *Bus Travels* (Fleet & Booking)\n2️⃣ *E-Commerce* (Catalog & Orders)\n3️⃣ *Dynamic API* (Hotels/Hospitals)\n4️⃣ *View Pricing*\n5️⃣ *Connect with Sales Admin*";
+            }
+            else if (state.CurrentStep == "MENU")
+            {
+                if (text == "1")
+                {
+                    reply = "🚌 *Wazflo for Travels:*\n- Automatic Bus Inventory\n- Booking Agreements via WhatsApp\n- Live Fleet Tracking\n\nReply *'START'* to go back or *'5'* to talk to us.";
+                }
+                else if (text == "2")
+                {
+                    reply = "🛍️ *Wazflo for Commerce:*\n- Upload Catalog\n- Auto-cart & Checkout\n- Razorpay Integration\n\nReply *'START'* to go back or *'5'* to talk to us.";
+                }
+                else if (text == "3")
+                {
+                    reply = "🔌 *Wazflo for Developers:*\n- Use your own Backend (Hotels, Schools)\n- Dynamic WhatsApp Forms\n- Custom Dashboards\n\nReply *'START'* to go back or *'5'* to talk to us.";
+                }
+                else if (text == "4")
+                {
+                    reply = "💰 *2026 Pricing Plans:*\n\n1. *Starter:* ₹499/mo (1 Phone Num)\n2. *Business:* ₹2499/mo (5 Numbers + Fleet)\n3. *Enterprise:* Custom API Integration.\n\n*Note:* Meta charges apply per message.";
+                }
+                else if (text == "5")
+                {
+                    state.CurrentStep = "COLLECTING_LEAD";
+                    reply = "Great! Please provide your *Business Name* and *Requirement*.\n\nExample: 'Skyline Travels, want to launch today'";
+                }
+                else
+                {
+                    reply = "Please choose a number from the menu (1-5). Type *'HI'* to see the menu again.";
+                }
+            }
+            else if (state.CurrentStep == "COLLECTING_LEAD")
+            {
+                // Save Lead
+                var leadLog = new UsageLog {
+                    StoreId = store.Id,
+                    Type = "platform_lead",
+                    Details = $"Lead from {phone}: {text}",
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.UsageLogs.Add(leadLog);
+                
+                state.CurrentStep = "IDLE";
+                reply = "✅ *Thank you!* Our team has received your request. We will reach out to you on this WhatsApp number within 2 hours.";
+            }
+
+            if (!string.IsNullOrEmpty(reply))
+            {
+                await _whatsappService.SendTextMessageAsync(phone, reply, store.WhatsappPhoneNumberId!, store.WhatsappAccessToken ?? "");
+            }
+
+            state.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
         }
 
         private async Task HandleTransportFlowAsync(string phone, string text, Store store)
